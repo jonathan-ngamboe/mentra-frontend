@@ -1,0 +1,100 @@
+{
+    "welcome": "Welcome",
+    "navigation": {
+      "home": "Home",
+      "services": "Services"
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "Sorry, the page you are looking for does not exist."
+    },
+    "home": {
+      "headline": "Welcome to ",
+      "subline": "Discover the job that really suits you with our career orientation test.",
+      "cta": "Get started",
+      "backHome": "Back to home"
+    },
+    "footer": {
+      "rights": "All rights reserved."
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage your application settings",
+      "save": "Save",
+      "language": {
+        "title": "Language",
+        "description": "Select your preferred language",
+        "english": "English",
+        "french": "French"
+      },
+      "theme": {
+        "title": "Theme", 
+        "description": "Choose between light and dark mode",
+        "light": "Light",
+        "dark": "Dark"
+      }
+    },
+    "services": {
+      "title": "Services",
+      "careerMatching": {
+        "title": "Career matching",
+        "subtitle": "Find your career path in just a few clicks",
+        "duration": "15-20 minutes",
+        "description": "Discover the job that suits you through a simple and personalized journey that analyzes your personality, skills and aspirations to offer you the best professional opportunities.",
+        "cta": "Get started now",
+        "question": "Question",
+        "next": "Next",
+        "previous": "Previous",
+        "finish": "Finish",
+        "results": {
+          "title": "Results",
+          "description": "Here are the results of your career orientation test.",
+          "cta": "Discover your job"
+        }
+      }
+    },
+    "error": {
+      "default": "An error occurred",
+      "access_denied": "Access denied",
+      "otp_expired": "Login link expired",
+      "email_link_invalid": "Login link invalid",
+      "email_not_confirmed": "Your email address has not been confirmed",
+      "user_not_found": "User not found",
+      "invalid_credentials": "Invalid credentials",
+      "otp_expired_description": "The login link has expired or is invalid. Try again by requesting a new link.",
+      "access_denied_description": "You do not have the necessary rights to access this page.",
+      "rateLimitExceeded": "Too many requests. Please try again later."
+    },
+    "login": {
+      "welcome": "👋 Nice to see you!",
+      "email": "Email",
+      "invalidEmail": "Invalid email",
+      "connect": "Login",
+      "submitting": "Sending...",
+      "noSpam": "No spam, we promise.",
+      "checkEmail": "Check your email",
+      "checkSpamFirst": "Don't forget to check your spam folder if you can't find the email.",
+      "resendWait": "You can resend an email in {seconds} seconds.",
+      "resendEmail": "Resend email",
+      "magicLink": {
+        "description": "Login with a single click using a magic link sent to your email.",
+        "sentDescription": "We have sent you an email with a magic link to login. It expires in 60 minutes.",
+        "cta": "Get magic link",
+        "linkResent": "A new magic link has been sent to your email address.",
+        "linkResendError": "An error occurred while sending the magic link"
+      },
+      "otp": {
+        "description": "Login with a single click using a magic code sent to your email.",
+        "sentDescription": "We have sent you an email with a magic code to login. It expires in 60 minutes.",
+        "cta": "Get magic code",
+        "enterCode": "Enter the code received by email:",
+        "verifying": "Verifying code...",
+        "verify": "Verify code",
+        "invalidCode": "The code is invalid, please try again.",
+        "successMessage": "Code verified. You are now logged in.",
+        "codeResent": "A new magic code has been sent to your email address.",
+        "codeResendError": "An error occurred while sending the magic code",
+        "notReceived": "Didn't receive the code?"
+      }
+    }
+  }

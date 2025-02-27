@@ -1,0 +1,99 @@
+{
+    "welcome": "Bienvenue",
+    "navigation": {
+      "home": "Accueil",
+      "services": "Services"
+    },
+    "notFound": {
+      "title": "Page non trouvée",
+      "description": "Désolé, la page que tu recherches n'existe pas."
+    },
+    "home": {
+      "headline": "Bienvenue chez ",
+      "subline": "Découvre le métier qui te correspond vraiment grâce à notre test d'orientation professionnelle.",
+      "cta": "Commencer",
+      "backHome": "Retour à l'accueil"
+    },
+    "footer": {
+      "rights": "Tous droits réservés."
+    },
+    "settings": {
+      "title": "Paramètres",
+      "description": "Gère les paramètres de ton application",
+      "save": "Enregistrer",
+      "language": {
+        "title": "Langue",
+        "description": "Sélectionne ta langue préférée",
+        "english": "Anglais",
+        "french": "Français"
+      },
+      "theme": {
+        "title": "Thème",
+        "description": "Choisis entre le mode clair et sombre",
+        "light": "Clair",
+        "dark": "Sombre"
+      }
+    },
+    "services": {
+      "title": "Services",
+      "careerMatching": {
+        "title": "Orientation pro",
+        "subtitle": "Trouve ta voie professionnelle en quelques clics",
+        "description": "Découvre le métier fait pour toi à travers un parcours simple et personnalisé qui analyse ta personnalité, tes compétences et tes aspirations pour te proposer les meilleures opportunités professionnelles.",
+        "duration": "15-20 minutes",
+        "cta": "Commence maintenant",
+        "question": "Question",
+        "next": "Suivant",
+        "previous": "Précédent",
+        "finish": "Terminer",
+        "results": {
+          "title": "Résultats",
+          "description": "Voici les métiers qui te correspondent le plus."
+        }
+      }
+    },
+    "error": {
+      "default": "Une erreur est survenue",
+      "access_denied": "Accès refusé",
+      "otp_expired": "Le lien de connexion a expiré",
+      "email_link_invalid": "Le lien de connexion est invalide",
+      "email_not_confirmed": "Ton adresse email n'a pas été confirmée",
+      "user_not_found": "Utilisateur introuvable",
+      "invalid_credentials": "Identifiants invalides",
+      "otp_expired_description": "Le lien de connexion a expiré ou est invalide. Réessaie en demandant un nouveau lien.",
+      "access_denied_description": "Tu n'as pas les droits nécessaires pour accéder à cette page.",
+      "rateLimitExceeded": "Trop de tentatives de connexion. Réessaie plus tard."
+    },
+    "login": {
+      "welcome": "👋 Ravis de te voir!",
+      "email": "Adresse email",
+      "invalidEmail": "Adresse email invalide",
+      "connect": "Se connecter",
+      "noSpam": "Pas de spam, promis.",
+      "checkEmail": "Vérifie ta boîte email",
+      "checkSpamFirst": "N'oublie pas de vérifier tes spams si tu ne trouves pas l'email.",
+      "resendWait": "Tu peux renvoyer un email dans {seconds} secondes.",
+      "resendEmail": "Renvoyer l'email",
+      "submitting": "Envoi en cours...",
+      "magicLink": {
+        "description": "Connecte-toi en un clic grâce à un lien magique qui t'es envoyé par email.",
+        "cta": "Recevoir le lien magique",
+        "sentDescription": "Nous t'avons envoyé un email avec un lien magique pour te connecter. Il expire dans 60 minutes.",
+        "linkResent": "Un nouveau lien magique a été envoyé à ton adresse email.",
+        "linkResendError": "Une erreur est survenue lors de l'envoi du lien magique"
+      },
+      "otp": {
+        "description": "Connecte-toi en un clic grâce à un code magique qui t'es envoyé par email.",
+        "cta": "Recevoir le code magique",
+        "sentDescription": "Nous t'avons envoyé un email avec un code magique pour te connecter. Il expire dans 60 minutes.",
+        "enterCode": "Entre le code reçu par email:",
+        "verifying": "Vérification en cours...",
+        "verify": "Vérifier",
+        "invalidCode": "Code invalide, réessaie.",
+        "successMessage": "Code vérifié. Tu es maintenant connecté.",
+        "codeResent": "Un nouveau code magique a été envoyé à ton adresse email.",
+        "codeResendError": "Une erreur est survenue lors de l'envoi du code magique",
+        "notReceived": "Tu n'as pas reçu le code?"
+      }
+    }
+  }
