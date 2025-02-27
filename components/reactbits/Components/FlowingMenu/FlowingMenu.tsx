@@ -4,10 +4,11 @@
 	26.02.2025
 */
 
-"use client";
+'use client';
 
-import React from "react";
-import { gsap } from "gsap";
+import React from 'react';
+import { gsap } from 'gsap';
+import { TransitionAnchor } from '@/components/transitions';
 
 interface MenuItemProps {
   link: string;
@@ -20,10 +21,7 @@ interface FlowingMenuProps {
   className?: string;
 }
 
-const FlowingMenu: React.FC<FlowingMenuProps> = ({
-  items = [],
-  className = "",
-}) => {
+const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], className = '' }) => {
   return (
     <div className={`w-full h-full overflow-hidden ${className}`}>
       <nav className="flex flex-col h-full m-0 p-0">
@@ -40,23 +38,21 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
   const marqueeRef = React.useRef<HTMLDivElement>(null);
   const marqueeInnerRef = React.useRef<HTMLDivElement>(null);
 
-  const animationDefaults = { duration: 0.6, ease: "expo" };
+  const animationDefaults = { duration: 0.6, ease: 'expo' };
 
   const findClosestEdge = (
     mouseX: number,
     mouseY: number,
     width: number,
     height: number
-  ): "top" | "bottom" => {
+  ): 'top' | 'bottom' => {
     const topEdgeDist = Math.pow(mouseX - width / 2, 2) + Math.pow(mouseY, 2);
-    const bottomEdgeDist =
-      Math.pow(mouseX - width / 2, 2) + Math.pow(mouseY - height, 2);
-    return topEdgeDist < bottomEdgeDist ? "top" : "bottom";
+    const bottomEdgeDist = Math.pow(mouseX - width / 2, 2) + Math.pow(mouseY - height, 2);
+    return topEdgeDist < bottomEdgeDist ? 'top' : 'bottom';
   };
 
   const handleMouseEnter = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current)
-      return;
+    if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
     const rect = itemRef.current.getBoundingClientRect();
     const edge = findClosestEdge(
       ev.clientX - rect.left,
@@ -66,14 +62,13 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
     );
 
     const tl = gsap.timeline({ defaults: animationDefaults });
-    tl.set(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" })
-      .set(marqueeInnerRef.current, { y: edge === "top" ? "101%" : "-101%" })
-      .to([marqueeRef.current, marqueeInnerRef.current], { y: "0%" });
+    tl.set(marqueeRef.current, { y: edge === 'top' ? '-101%' : '101%' })
+      .set(marqueeInnerRef.current, { y: edge === 'top' ? '101%' : '-101%' })
+      .to([marqueeRef.current, marqueeInnerRef.current], { y: '0%' });
   };
 
   const handleMouseLeave = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current)
-      return;
+    if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
     const rect = itemRef.current.getBoundingClientRect();
     const edge = findClosestEdge(
       ev.clientX - rect.left,
@@ -83,9 +78,9 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
     );
 
     const tl = gsap.timeline({ defaults: animationDefaults }) as TimelineMax;
-    tl.to(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" }).to(
+    tl.to(marqueeRef.current, { y: edge === 'top' ? '-101%' : '101%' }).to(
       marqueeInnerRef.current,
-      { y: edge === "top" ? "101%" : "-101%" }
+      { y: edge === 'top' ? '101%' : '-101%' }
     );
   };
 
@@ -108,14 +103,14 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
       className="flex-1 relative overflow-hidden text-center shadow-[0_-1px_0_0_#fff]"
       ref={itemRef}
     >
-      <a
+      <TransitionAnchor
         className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-inherit text-[4vh] hover:text-[#060606] focus:text-white focus-visible:text-[#060606]"
         href={link}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {text}
-      </a>
+      </TransitionAnchor>
       <div
         className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none bg-white translate-y-[101%]"
         ref={marqueeRef}
