@@ -1,5 +1,3 @@
-import { useTransitionRouter } from 'next-view-transitions';
-
 /**
  * Create an smooth transition with crystal blur effect
  * @returns A promise that resolves when the overlay is ready
@@ -48,28 +46,4 @@ export function portalTransition() {
       }, 100); // Short delay to ensure the new page is ready
     }, 50); // Minimal delay for the overlay to show before navigation
   });
-}
-
-/**
- * Navigate to a new URL with a transition
- * @param url Destination URL
- */
-export async function navigateWithTransition(url: string) {
-  const router = useTransitionRouter();
-
-  // Ajouter une classe au body pour désactiver temporairement les interactions
-  // Add a class to the body to temporarily disable interactions
-  document.body.classList.add('transitioning');
-
-  // Créer et afficher l'overlay AVANT de naviguer
-  // Create and show the overlay BEFORE navigating
-  const transitionPromise = portalTransition();
-
-  // Attendre que l'overlay soit visible avant de naviguer
-  // Wait for the overlay to be visible before navigating
-  await transitionPromise;
-
-  // Maintenant naviguer vers la nouvelle page
-  // Now navigate to the new page
-  router.push(url);
 }
