@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { navbar } from "@/resources/config";
-import Link from "next/link";
+import TransitionLink from "@/components/transitions/TransitionLink";
 import { SlidersVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -81,7 +81,7 @@ export function NavDock({ dictionary, onSettingsClick }: NavDockProps) {
           <DockIcon key={item.href}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link
+                <TransitionLink
                   href={item.href}
                   className={cn(
                     buttonVariants({ variant: "ghost", size: "icon" }),
@@ -93,7 +93,7 @@ export function NavDock({ dictionary, onSettingsClick }: NavDockProps) {
                   {active && (
                     <span className="absolute bottom-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
                   )}
-                </Link>
+                </TransitionLink>
               </TooltipTrigger>
               <TooltipContent>
                 <p>

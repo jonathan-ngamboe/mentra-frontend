@@ -1,0 +1,97 @@
+
+/* Transition overlay */ 
+
+.transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    mix-blend-mode: overlay;
+    background: radial-gradient(circle at center, transparent 0%, rgba(255,255,255,0) 100%);
+    backdrop-filter: blur(0px) brightness(100%);
+    transition: opacity 0.1s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .transition-overlay.active {
+    opacity: 1;
+    backdrop-filter: blur(15px) brightness(130%);
+    background: radial-gradient(circle at center, transparent 30%, rgba(255,255,255,0.3) 100%);
+  }
+  
+  /* Loader cristallin simplifié */
+  .crystal-loader {
+    width: 80px;
+    height: 80px;
+    position: relative;
+  }
+  
+  .crystal-spinner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    animation: spin 3s linear infinite;
+  }
+  
+  .crystal-element {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 
+                inset 0 0 8px rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(5px);
+  }
+  
+  .crystal-element.c1 {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: pulse 1.5s ease-in-out infinite;
+    animation-delay: 0s;
+    background: rgba(255, 255, 255, 0.8);
+  }
+  
+  .crystal-element.c2 {
+    bottom: 10px;
+    left: 10px;
+    animation: pulse 1.5s ease-in-out infinite;
+    animation-delay: 0.5s;
+    background: rgba(220, 240, 255, 0.8);
+  }
+  
+  .crystal-element.c3 {
+    bottom: 10px;
+    right: 10px;
+    animation: pulse 1.5s ease-in-out infinite;
+    animation-delay: 1s;
+    background: rgba(240, 240, 255, 0.8);
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { 
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    50% { 
+      transform: scale(1.2);
+      opacity: 1;
+    }
+  }
+  
+  body.transitioning {
+    pointer-events: none;
+    overflow: hidden;
+  }
