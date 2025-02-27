@@ -147,8 +147,8 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
                     control={otpForm.control}
                     name="pin"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormControl className="w-full">
+                      <FormItem className='place-items-center'>
+                        <FormControl>
                           <InputOTP maxLength={6} {...field} pattern={REGEXP_ONLY_DIGITS}>
                             <InputOTPGroup>
                               <InputOTPSlot index={0} />
