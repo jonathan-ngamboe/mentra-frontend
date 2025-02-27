@@ -49,11 +49,10 @@ interface SettingsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   style?: React.CSSProperties;
   className?: string;
   dictionary: Dictionary;
-  onClose?: () => void;
 }
 
 const SettingsPanel = forwardRef<HTMLDivElement, SettingsPanelProps>(
-  ({ dictionary, onClose, className, ...rest }, ref) => {
+  ({ dictionary, className, ...rest }, ref) => {
     const router = useRouter();
 
     // Initialize with default values
@@ -64,7 +63,7 @@ const SettingsPanel = forwardRef<HTMLDivElement, SettingsPanelProps>(
     useEffect(() => {
       const path = window.location.pathname;
       const initialLanguage =
-        (Object.entries(CONFIG.languages).find(([_, config]) =>
+        (Object.entries(CONFIG.languages).find(([_langKey, config]) =>
           path.startsWith(`/${config.path}`)
         )?.[0] as Language) || "en";
 
