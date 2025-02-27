@@ -117,7 +117,7 @@ const SettingsPanel = forwardRef<HTMLDivElement, SettingsPanelProps>(
           src={CONFIG.languages[selectedLanguage].flag}
           alt={CONFIG.languages[selectedLanguage].name}
           width={24}
-          height={16}
+          height={24}
         />
       ),
       [selectedLanguage]
@@ -190,7 +190,7 @@ const SettingsPanel = forwardRef<HTMLDivElement, SettingsPanelProps>(
                       src={CONFIG.languages[lang as Language].flag}
                       alt={CONFIG.languages[lang as Language].name}
                       width={24}
-                      height={16}
+                      height={24}
                     />
                     <span>
                       {
