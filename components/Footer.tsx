@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/tooltip";
 import { contact, siteName } from "@/resources/config";
 import { Dictionary } from "@/types/dictionary";
-import Link from "next/link";
+import TransitionLink from "@/components/transitions/TransitionLink";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
@@ -22,9 +22,9 @@ export function Footer({ dictionary }: FooterProps) {
       <div className="w-full max-w-4xl px-16 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="flex flex-wrap items-center justify-center sm:justify-start">
           <span>© {currentYear} /</span>
-          <Link className="mx-[0.25rem]" href="/">
+          <TransitionLink className="mx-[0.25rem]" href="/">
             {siteName}
-          </Link>
+          </TransitionLink>
           <span>/ {dictionary.footer.rights}</span>
         </p>
 
@@ -35,7 +35,7 @@ export function Footer({ dictionary }: FooterProps) {
               <DockIcon key={name}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Link
+                    <TransitionLink
                       href={social.url}
                       className={cn(
                         buttonVariants({ variant: "ghost", size: "icon" }),
@@ -43,7 +43,7 @@ export function Footer({ dictionary }: FooterProps) {
                       )}
                     >
                       <social.icon className="size-4" />
-                    </Link>
+                    </TransitionLink>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>{name}</p>

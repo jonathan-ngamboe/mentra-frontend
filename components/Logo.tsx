@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import Link from 'next/link';
+import TransitionLink from '@/components/transitions/TransitionLink';
 import Image from 'next/image';
 import { siteName } from '@/resources/config';
 import { useState, useEffect } from 'react';
@@ -73,9 +73,9 @@ export const Logo = ({
   // If href is provided, wrap in Link
   if (href) {
     return (
-      <Link href={href} aria-label={alt} className="cursor-pointer z-40 relative">
+      <TransitionLink href={href} aria-label={alt} className="cursor-pointer z-40 relative">
         {logoElement}
-      </Link>
+      </TransitionLink>
     );
   }
 
