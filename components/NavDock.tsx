@@ -16,9 +16,10 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getNestedValue } from "@/lib/utils";
+import { Dictionary } from "@/types/dictionary";
 
 type NavDockProps = {
-  dictionary: any;
+  dictionary: Dictionary;
   onSettingsClick: () => void;
 };
 
