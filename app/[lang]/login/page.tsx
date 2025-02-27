@@ -20,7 +20,7 @@ export default async function LoginPage({
             {dictionary.login.otp.description}
           </p>
         </div>
-        <OtpLogin dictionary={dictionary} />
+        <OtpLogin dictionary={dictionary} onSuccessRedirect="/" />
       </div>
     </div>
   );
