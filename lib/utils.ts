@@ -1,12 +1,15 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getNestedValue(obj: any, path: string): string {
-  return path.split(".").reduce((prev, curr) => {
-    return prev && prev[curr] ? prev[curr] : path;
-  }, obj);
+export function getNestedValue(obj: Record<string, unknown>, path: string): string {
+  return path.split(".").reduce<unknown>((prev, curr) => {
+    if (prev && typeof prev === 'object' && curr in (prev as Record<string, unknown>)) {
+      return (prev as Record<string, unknown>)[curr];
+    }
+    return path;
+  }, obj) as string;
 }
