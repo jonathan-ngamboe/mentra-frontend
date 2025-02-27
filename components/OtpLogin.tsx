@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTransitionNavigation } from '@/components/transitions';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCountdown } from '@/hooks/useCountdown';
@@ -23,7 +23,7 @@ import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import type { OtpLoginProps, OtpFormValues, EmailFormValues } from '@/types/login';
 
 export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
-  const router = useRouter();
+  const { navigateWithTransition } = useTransitionNavigation();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,7 +97,7 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
       await verifyOtp(data.pin, email);
       toast.success(dictionary.login.otp.successMessage);
       if (onSuccessRedirect) {
-        router.push(onSuccessRedirect);
+        navigateWithTransition(onSuccessRedirect);
       }
     } catch (error) {
       toast.error(dictionary.login.otp.invalidCode);
@@ -147,7 +147,7 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
                     control={otpForm.control}
                     name="pin"
                     render={({ field }) => (
-                      <FormItem className='place-items-center'>
+                      <FormItem className="place-items-center">
                         <FormControl>
                           <InputOTP maxLength={6} {...field} pattern={REGEXP_ONLY_DIGITS}>
                             <InputOTPGroup>

@@ -1,7 +1,8 @@
 "use client";
 
 import { Dictionary } from "@/types/dictionary";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTransitionNavigation } from "@/components/transitions";
 import { Button } from "@/components/ui/button";
 import { House } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -12,7 +13,7 @@ type ErrorContentProps = {
 
 export function ErrorContent({ dictionary }: ErrorContentProps) {
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const { navigateWithTransition } = useTransitionNavigation();
 
   const errorCode = searchParams.get("error_code");
   const errorType = searchParams.get("error");
@@ -38,7 +39,7 @@ export function ErrorContent({ dictionary }: ErrorContentProps) {
       <Alert variant="destructive">
         <AlertTitle>{errorMessage.title}</AlertTitle>
         <AlertDescription>{errorMessage.description}</AlertDescription>
-        <Button variant="ghost" size="lg" onClick={() => router.push(`/`)}>
+        <Button variant="ghost" size="lg" onClick={() => navigateWithTransition(`/`)}>
           <House />
           {dictionary.home.backHome}
         </Button>
