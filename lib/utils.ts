@@ -1,17 +1,18 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { Dictionary } from '@/types/dictionary';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getNestedValue(obj: Record<string, unknown>, path: string): string {
+export function getDictionaryValue(dictionary: Dictionary, path: string): string {
   return path.split('.').reduce<unknown>((prev, curr) => {
-    if (prev && typeof prev === 'object' && curr in (prev as Record<string, unknown>)) {
-      return (prev as Record<string, unknown>)[curr];
+    if (prev && typeof prev === 'object' && curr in prev) {
+      return (prev as any)[curr];
     }
     return path;
-  }, obj) as string;
+  }, dictionary) as string;
 }
 
 export const isExternalUrl = (url: string): boolean => {

@@ -15,7 +15,7 @@ import { SlidersVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { getNestedValue } from "@/lib/utils";
+import { getDictionaryValue } from "@/lib/utils";
 import { Dictionary } from "@/types/dictionary";
 
 type NavDockProps = {
@@ -97,7 +97,7 @@ export function NavDock({ dictionary, onSettingsClick }: NavDockProps) {
               </TooltipTrigger>
               <TooltipContent>
                 <p>
-                  {getNestedValue(dictionary, item.labelKey) || item.labelKey}
+                  {getDictionaryValue(dictionary, item.labelKey) || item.labelKey}
                 </p>
               </TooltipContent>
             </Tooltip>

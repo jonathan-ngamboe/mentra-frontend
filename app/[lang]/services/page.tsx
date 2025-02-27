@@ -1,7 +1,7 @@
 import { getDictionary, SupportedLocale } from "../dictionaries";
 import { services } from "@/resources/config";
 import FlowingMenu from "@/components/reactbits/Components/FlowingMenu/FlowingMenu";
-import { getNestedValue } from "@/lib/utils";
+import { getDictionaryValue } from "@/lib/utils";
 
 export default async function Services({
   params,
@@ -13,7 +13,7 @@ export default async function Services({
 
   function getServiceItems() {
     return services.map((service) => ({
-      text: getNestedValue(dict, service.labelKey) || service.labelKey,
+      text: getDictionaryValue(dict, service.labelKey) || service.labelKey,
       image: service.image,
       link: service.link,
     }));
