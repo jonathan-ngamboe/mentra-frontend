@@ -66,12 +66,11 @@ const services = [
 ]
 
 
-// Routes for SEO
+// Public routes for SEO
 const routes = [
   "/",
   "/services",
   "/services/career-matching",
-  "/services/career-matching/test",
 ];
 
 export {
