@@ -1,19 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useCountdown } from "@/hooks/useCountdown";
-import { LoginForm } from "@/components/LoginForm";
-import { Button } from "@/components/ui/button";
-import { signinByOtp, verifyOtp } from "@/services";
-import { toast } from "sonner";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCountdown } from '@/hooks/useCountdown';
+import { LoginForm } from '@/components/LoginForm';
+import { Button } from '@/components/ui/button';
+import { signinByOtp, verifyOtp } from '@/services';
+import { toast } from 'sonner';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import {
   Form,
   FormControl,
@@ -21,19 +17,15 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { EmailFormSchema, OtpFormSchema } from "@/lib/validations/auth";
-import { REGEXP_ONLY_DIGITS } from "input-otp";
-import type {
-  OtpLoginProps,
-  OtpFormValues,
-  EmailFormValues,
-} from "@/types/login";
+} from '@/components/ui/form';
+import { EmailFormSchema, OtpFormSchema } from '@/lib/validations/auth';
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import type { OtpLoginProps, OtpFormValues, EmailFormValues } from '@/types/login';
 
 export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
   const router = useRouter();
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [showRetry, setShowRetry] = useState(false);
@@ -42,16 +34,16 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
   const otpForm = useForm<OtpFormValues>({
     resolver: zodResolver(OtpFormSchema),
     defaultValues: {
-      pin: "",
+      pin: '',
     },
   });
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(EmailFormSchema),
     defaultValues: {
-      email: "",
+      email: '',
     },
-    mode: "onChange",
+    mode: 'onChange',
   });
 
   const { countdown, reset } = useCountdown({
@@ -65,7 +57,7 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
 
     const result = await emailForm.trigger();
     if (!result) {
-      return; 
+      return;
     }
 
     setIsSubmitting(true);
@@ -77,31 +69,9 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
       await signinByOtp(validatedEmail);
       setIsSubmitted(true);
       toast.success(dictionary.login.otp.sentDescription);
-    } catch (error: any) {
-      if (error.__isAuthError) {
-        switch (error.code) {
-          case "email_address_invalid":
-            emailForm.setError("email", {
-              type: "manual",
-              message: dictionary.login.invalidEmail || "Invalid email address",
-            });
-            toast.error(
-              dictionary.login.invalidEmail || "Invalid email address"
-            );
-            break;
-          case "rate_limit_exceeded":
-            toast.error(
-              dictionary.error.rateLimitExceeded ||
-                "Too many attempts, please try again later"
-            );
-            break;
-          default:
-            toast.error(dictionary.error.default);
-        }
-      } else {
-        toast.error(dictionary.error.default);
-      }
-      console.error("Login error:", error);
+    } catch (error) {
+      toast.error(dictionary.error.default);
+      console.error('Login error:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -113,15 +83,9 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
       setIsResendEnabled(false);
       reset();
       toast.success(dictionary.login.otp.sentDescription);
-    } catch (error: any) {
-      if (error.__isAuthError && error.code === "rate_limit_exceeded") {
-        toast.error(
-          dictionary.error.rateLimitExceeded ||
-            "Too many attempts, please try again later"
-        );
-      } else {
-        toast.error(dictionary.error.default);
-      }
+    } catch (error) {
+      toast.error(dictionary.error.default);
+      console.error('Login error:', error);
     } finally {
       setShowRetry(false);
     }
@@ -135,24 +99,9 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
       if (onSuccessRedirect) {
         router.push(onSuccessRedirect);
       }
-    } catch (error: any) {
-      if (error.__isAuthError) {
-        switch (error.code) {
-          case "invalid_otp":
-            toast.error(dictionary.login.otp.invalidCode);
-            break;
-          case "expired_otp":
-            toast.error(
-              dictionary.error.otp_expired ||
-                "The code has expired. Please request a new one."
-            );
-            break;
-          default:
-            toast.error(dictionary.login.otp.invalidCode);
-        }
-      } else {
-        toast.error(dictionary.login.otp.invalidCode);
-      }
+    } catch (error) {
+      toast.error(dictionary.login.otp.invalidCode);
+      console.error('Login error:', error);
     } finally {
       setIsVerifying(false);
     }
@@ -166,13 +115,15 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
   const showRetryButton = () => {
     if (showRetry) {
       return (
-        <Button onClick={handleResend} disabled={!isResendEnabled} className="cursor-pointer w-full" variant="outline">
+        <Button
+          onClick={handleResend}
+          disabled={!isResendEnabled}
+          className="cursor-pointer w-full"
+          variant="outline"
+        >
           {isResendEnabled
             ? dictionary.login.resendEmail
-            : dictionary.login.resendWait.replace(
-                "{seconds}",
-                countdown.toString()
-              )}
+            : dictionary.login.resendWait.replace('{seconds}', countdown.toString())}
         </Button>
       );
     }
@@ -187,10 +138,7 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
     return (
       <div className="flex flex-col items-center gap-6">
         <Form {...otpForm}>
-          <form
-            onSubmit={otpForm.handleSubmit(onSubmit)}
-            className="w-2/3 space-y-6 w-full"
-          >
+          <form onSubmit={otpForm.handleSubmit(onSubmit)} className="w-2/3 space-y-6 w-full">
             <div className="flex flex-col gap-8">
               <div className="w-full flex flex-col items-center">
                 <div className="flex flex-col items-center gap-8">
@@ -201,11 +149,7 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl className="w-full">
-                          <InputOTP
-                            maxLength={6}
-                            {...field}
-                            pattern={REGEXP_ONLY_DIGITS}
-                          >
+                          <InputOTP maxLength={6} {...field} pattern={REGEXP_ONLY_DIGITS}>
                             <InputOTPGroup>
                               <InputOTPSlot index={0} />
                               <InputOTPSlot index={1} />
@@ -224,9 +168,7 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
                     )}
                   />
                   <Button type="submit" disabled={isVerifying} className="w-full cursor-pointer">
-                    {isVerifying
-                      ? dictionary.login.otp.verifying
-                      : dictionary.login.otp.verify}
+                    {isVerifying ? dictionary.login.otp.verifying : dictionary.login.otp.verify}
                   </Button>
                 </div>
               </div>

@@ -26,9 +26,7 @@ export async function signinByOtp(email: string) {
   });
 
   if (error) {
-    const authError = error as any;
-    authError.__isAuthError = true;
-    throw authError;
+    throw error;
   }
 }
 
@@ -42,8 +40,6 @@ export async function verifyOtp(token: string, email: string) {
   });
 
   if (error) {
-    const authError = error as any;
-    authError.__isAuthError = true;
-    throw authError;
+    throw error;
   }
 }
