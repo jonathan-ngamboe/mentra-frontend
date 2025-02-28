@@ -19,7 +19,7 @@ export function Footer({ dictionary }: FooterProps) {
 
   return (
     <footer className="relative w-full flex flex-col items-center">
-      <div className="w-full max-w-4xl px-16 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="w-full max-w-4xl px-16 hidden sm:flex flex-col sm:flex-row items-center justify-between gap-4 text-muted-foreground">
         <p className="flex flex-wrap items-center justify-center sm:justify-start">
           <span>© {currentYear} /</span>
           <TransitionLink className="mx-[0.25rem]" href="/">
