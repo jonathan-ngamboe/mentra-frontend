@@ -74,6 +74,7 @@ export interface Dictionary {
       resendWait: string;
       resendEmail: string;
       submitting: string;
+      emailRequired: string;
       magicLink: {
         cta: string;
         description: string;
@@ -93,6 +94,8 @@ export interface Dictionary {
         codeResent: string;
         codeResendError: string;
         notReceived: string;
+        otpLength: string;
+        otpOnlyDigits: string;
       };
     };
   }

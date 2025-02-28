@@ -62,7 +62,7 @@
       "invalid_credentials": "Identifiants invalides",
       "otp_expired_description": "Le lien de connexion a expiré ou est invalide. Réessaie en demandant un nouveau lien.",
       "access_denied_description": "Tu n'as pas les droits nécessaires pour accéder à cette page.",
-      "rateLimitExceeded": "Trop de tentatives de connexion. Réessaie plus tard."
+      "rateLimitExceeded": "Trop de tentatives. Réessaie plus tard."
     },
     "login": {
       "welcome": "👋 Ravis de te voir!",
@@ -72,9 +72,10 @@
       "noSpam": "Pas de spam, promis.",
       "checkEmail": "Vérifie ta boîte email",
       "checkSpamFirst": "N'oublie pas de vérifier tes spams si tu ne trouves pas l'email.",
-      "resendWait": "Tu peux renvoyer un email dans {seconds} secondes.",
+      "resendWait": "Tu pourras renvoyer un email dans {seconds} secondes.",
       "resendEmail": "Renvoyer l'email",
       "submitting": "Envoi en cours...",
+      "emailRequired": "L'adresse email est requise",
       "magicLink": {
         "description": "Connecte-toi en un clic grâce à un lien magique qui t'es envoyé par email.",
         "cta": "Recevoir le lien magique",
@@ -93,7 +94,8 @@
         "successMessage": "Code vérifié. Tu es maintenant connecté.",
         "codeResent": "Un nouveau code magique a été envoyé à ton adresse email.",
         "codeResendError": "Une erreur est survenue lors de l'envoi du code magique",
-        "notReceived": "Tu n'as pas reçu le code?"
+        "notReceived": "Tu n'as pas reçu le code?",
+        "otpLength": "Le code doit contenir 6 caractères"
       }
     }
   }
