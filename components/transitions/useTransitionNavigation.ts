@@ -40,7 +40,7 @@ export function useTransitionNavigation() {
     e.preventDefault();
     if (isExternalUrl(href)) {
       window.open(href, '_blank');
-    } else {
+    } else if (href !== window.location.pathname) {
       await navigateWithTransition(href);
     }
   };
