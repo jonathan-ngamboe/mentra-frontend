@@ -1,5 +1,5 @@
 import lottie, { AnimationItem } from 'lottie-web';
-import { getRandomVibrantColor, hslToHex } from '@/lib/utils';
+import { getRandomVibrantColor } from '@/lib/utils';
 
 /**
  * Create a smooth transition with crystal blur effect and animated loader
