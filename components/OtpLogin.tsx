@@ -109,6 +109,7 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
       }
     } catch (error) {
       toast.error(dictionary.login.otp.invalidCode);
+      console.error('Login error:', error);
     } finally {
       setIsVerifying(false);
     }
