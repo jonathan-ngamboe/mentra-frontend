@@ -30,7 +30,7 @@ export function Footer({ dictionary }: FooterProps) {
 
         <div className="flex gap-16">
           {Object.entries(contact.social)
-            .filter(([_name, social]) => social.navbar)
+            .filter(([, social]) => social.navbar)
             .map(([name, social]) => (
               <DockIcon key={name}>
                 <Tooltip>

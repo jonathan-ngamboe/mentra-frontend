@@ -62,7 +62,7 @@ const SettingsPanel = forwardRef<HTMLDivElement, SettingsPanelProps>(
     useEffect(() => {
       const path = window.location.pathname;
       const initialLanguage =
-        (Object.entries(CONFIG.languages).find(([_langKey, config]) =>
+        (Object.entries(CONFIG.languages).find(([, config]) =>
           path.startsWith(`/${config.path}`)
         )?.[0] as Language) || 'en';
 

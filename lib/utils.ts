@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export function getDictionaryValue(dictionary: Dictionary, path: string): string {
   return path.split('.').reduce<unknown>((prev, curr) => {
     if (prev && typeof prev === 'object' && curr in prev) {
-      return (prev as any)[curr];
+      return (prev as Record<string, unknown>)[curr];
     }
     return path;
   }, dictionary) as string;
