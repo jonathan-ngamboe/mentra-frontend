@@ -96,7 +96,8 @@
         "codeResent": "A new magic code has been sent to your email address.",
         "codeResendError": "An error occurred while sending the magic code",
         "notReceived": "Didn't receive the code?",
-        "otpLength": "The code must contain 6 characters"
+        "otpLength": "The code must contain 6 characters",
+        "otpOnlyDigits": "The code must contain only digits"
       }
     }
   }

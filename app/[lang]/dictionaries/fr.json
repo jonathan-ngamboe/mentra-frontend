@@ -95,7 +95,8 @@
         "codeResent": "Un nouveau code magique a été envoyé à ton adresse email.",
         "codeResendError": "Une erreur est survenue lors de l'envoi du code magique",
         "notReceived": "Tu n'as pas reçu le code?",
-        "otpLength": "Le code doit contenir 6 caractères"
+        "otpLength": "Le code doit contenir 6 caractères",
+        "otpOnlyDigits": "Le code doit contenir uniquement des chiffres"
       }
     }
   }
