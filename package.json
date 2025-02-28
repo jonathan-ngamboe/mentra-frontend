@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky",
+    "prepare": "husky install",
     "type-check": "tsc --noEmit",
     "validate": "pnpm lint && pnpm type-check",
     "test": "echo \"No tests configured yet\""
@@ -15,7 +15,8 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "bash -c 'pnpm tsc --noEmit'"
     ],
     "*.{json,md}": [
       "prettier --write"
