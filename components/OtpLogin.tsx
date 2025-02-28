@@ -18,7 +18,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { EmailFormSchema, OtpFormSchema } from '@/lib/validations/auth';
+import { createEmailFormSchema, createOtpFormSchema } from '@/lib/validations/auth';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import type { OtpLoginProps, OtpFormValues, EmailFormValues } from '@/types/login';
 
@@ -32,14 +32,14 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
   const [isResendEnabled, setIsResendEnabled] = useState(false);
 
   const otpForm = useForm<OtpFormValues>({
-    resolver: zodResolver(OtpFormSchema),
+    resolver: zodResolver(createOtpFormSchema(dictionary)),
     defaultValues: {
       pin: '',
     },
   });
 
   const emailForm = useForm<EmailFormValues>({
-    resolver: zodResolver(EmailFormSchema),
+    resolver: zodResolver(createEmailFormSchema(dictionary)),
     defaultValues: {
       email: '',
     },
@@ -52,6 +52,24 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
     onComplete: () => setIsResendEnabled(true),
   });
 
+  const sendOtp = async (email: string) => {
+    try {
+      await signinByOtp(email);
+      setIsSubmitted(true);
+      setIsResendEnabled(false);
+      reset();
+      toast.success(dictionary.login.otp.sentDescription);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('rate limit')) {
+        toast.error(dictionary.error.rateLimitExceeded);
+      } else {
+        toast.error(dictionary.error.default);
+        console.error('Login error:', error);
+      }
+    }
+  };
+
   const handleEmailSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -62,30 +80,20 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
 
     setIsSubmitting(true);
 
-    try {
-      const formValues = emailForm.getValues();
-      const validatedEmail = formValues.email;
+    const formValues = emailForm.getValues();
+    const validatedEmail = formValues.email;
 
-      await signinByOtp(validatedEmail);
-      setIsSubmitted(true);
-      toast.success(dictionary.login.otp.sentDescription);
-    } catch (error) {
-      toast.error(dictionary.error.default);
-      console.error('Login error:', error);
+    try {
+      await sendOtp(validatedEmail);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleResend = async () => {
+    if (isSubmitting) return;
     try {
-      await signinByOtp(email);
-      setIsResendEnabled(false);
-      reset();
-      toast.success(dictionary.login.otp.sentDescription);
-    } catch (error) {
-      toast.error(dictionary.error.default);
-      console.error('Login error:', error);
+      await sendOtp(email);
     } finally {
       setShowRetry(false);
     }
@@ -101,7 +109,6 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
       }
     } catch (error) {
       toast.error(dictionary.login.otp.invalidCode);
-      console.error('Login error:', error);
     } finally {
       setIsVerifying(false);
     }
@@ -112,18 +119,46 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
     setShowRetry(true);
   };
 
+  const showRetryLabel = () => {
+    if (!isResendEnabled) {
+      return dictionary.login.resendWait.replace('{seconds}', countdown.toString());
+    }
+
+    if (isSubmitting) {
+      return (
+        <span className="flex items-center gap-2">
+          <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          {dictionary.login.submitting || 'Submitting...'}
+        </span>
+      );
+    }
+    return dictionary.login.resendEmail;
+  };
+
   const showRetryButton = () => {
     if (showRetry) {
       return (
         <Button
           onClick={handleResend}
-          disabled={!isResendEnabled}
+          disabled={!isResendEnabled || isSubmitting || isVerifying}
           className="cursor-pointer w-full"
           variant="outline"
         >
-          {isResendEnabled
-            ? dictionary.login.resendEmail
-            : dictionary.login.resendWait.replace('{seconds}', countdown.toString())}
+          {showRetryLabel()}
         </Button>
       );
     }
