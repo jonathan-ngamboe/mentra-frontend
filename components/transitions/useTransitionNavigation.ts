@@ -1,7 +1,7 @@
 'use client';
 
 import { useTransitionRouter } from 'next-view-transitions';
-import { portalTransition } from './effects';
+import { catTransition } from './effects';
 import { isExternalUrl } from '@/lib/utils';
 
 /**
@@ -19,7 +19,7 @@ export function useTransitionNavigation() {
     document.body.classList.add('transitioning');
 
     // Create and show the overlay BEFORE navigating
-    const transitionPromise = portalTransition();
+    const transitionPromise = catTransition();
 
     // Wait for the overlay to be visible before navigating
     await transitionPromise;
