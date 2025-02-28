@@ -31,13 +31,13 @@ export const Logo = ({
 
   // Size mapping to pixel dimensions for icon
   const sizeMap = {
-    xs: { width: 40, height: 40, textSize: 'text-base' },
-    s: { width: 60, height: 60, textSize: 'text-lg' },
-    m: { width: 80, height: 80, textSize: 'text-xl' },
-    l: { width: 100, height: 100, textSize: 'text-2xl' },
-    xl: { width: 120, height: 120, textSize: 'text-3xl' },
-    '2xl': { width: 160, height: 160, textSize: 'text-4xl' },
-    '3xl': { width: 200, height: 200, textSize: 'text-5xl' },
+    xs: { width: 40, height: 20, textSize: 'text-base' },
+    s: { width: 60, height: 30, textSize: 'text-lg' },
+    m: { width: 80, height: 40, textSize: 'text-xl' },
+    l: { width: 100, height: 50, textSize: 'text-2xl' },
+    xl: { width: 120, height: 60, textSize: 'text-3xl' },
+    '2xl': { width: 160, height: 80, textSize: 'text-4xl' },
+    '3xl': { width: 200, height: 100, textSize: 'text-5xl' },
   };
 
   // Get dimensions based on size prop
