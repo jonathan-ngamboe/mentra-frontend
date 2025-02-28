@@ -1,22 +1,23 @@
+import { Dictionary } from "@/types/dictionary";
 import { z } from "zod";
 
 // Schema to validate email
-export const EmailFormSchema = z.object({
+export const createEmailFormSchema = (dictionary: Dictionary) => z.object({
   email: z
     .string()
-    .min(1, { message: "Email is required" })
-    .email({ message: "Invalid email address" }),
+    .min(1, { message: dictionary.login.emailRequired })
+    .email({ message: dictionary.login.invalidEmail }),
 });
 
 // Schema to validate OTP code
-export const OtpFormSchema = z.object({
+export const createOtpFormSchema = (dictionary: Dictionary) => z.object({
   pin: z
     .string()
-    .min(6, { message: "OTP must be 6 digits" })
-    .max(6, { message: "OTP must be 6 digits" })
-    .regex(/^\d+$/, { message: "OTP must contain only digits" }),
+    .min(6, { message: dictionary.login.otp.otpLength })
+    .max(6, { message: dictionary.login.otp.otpLength })
+    .regex(/^\d+$/, { message: dictionary.login.otp.otpOnlyDigits }),
 });
 
 // Exported types for form values
-export type EmailFormValues = z.infer<typeof EmailFormSchema>;
-export type OtpFormValues = z.infer<typeof OtpFormSchema>;
+export type EmailFormValues = z.infer<ReturnType<typeof createEmailFormSchema>>;
+export type OtpFormValues = z.infer<ReturnType<typeof createOtpFormSchema>>;
