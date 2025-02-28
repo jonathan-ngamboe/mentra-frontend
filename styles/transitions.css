@@ -33,8 +33,6 @@ body.transitioning {
   overflow: hidden;
 }
 
-
-
 /* catTransition */
 .page-transition-container {
   position: fixed;
@@ -47,51 +45,51 @@ body.transitioning {
   justify-content: center;
   align-items: center;
   pointer-events: none;
-  transform: translateY(100%);
 }
 
-.page-transition-container.phase-one {
+/* Conteneur du cercle ripple */
+/* Ripple circle container */
+.ripple-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* The ripple circle itself */
+.ripple-circle {
+  position: absolute;
+  border-radius: 50%;
   background-color: var(--transition-color, #eae407);
-  transform: translateY(0%);
-  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  /* Position and size are set in JS */
 }
 
-.page-transition-container.phase-two {
-  background-color: #000;
-  transition: none;
-  /* No transition for background-color for a sharp change */
-}
-
-.page-transition-container.phase-four {
-  /* Transition directement depuis l'état noir */
-  transform: translateY(-100%);
-  transition: transform 800ms cubic-bezier(0.65, 0, 0.35, 1);
-  background-color: #000; /* Gardez le fond noir pendant la transition de sortie */
-}
-
+/* Loader animation */
 .transition-loader-container {
   width: min(220px, 25vw);
   height: min(220px, 25vw);
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 0.5s ease, transform 0.5s ease;
+  position: relative;
+  z-index: 10000;
 }
 
-.page-transition-container.phase-one .transition-loader-container {
+.page-transition-container.active .transition-loader-container {
   opacity: 1;
   transform: scale(1);
   transition: opacity 0.5s ease 0.3s, transform 0.5s ease 0.3s;
 }
 
-.page-transition-container.phase-two .transition-loader-container {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.page-transition-container.phase-three .transition-loader-container {
+.page-transition-container.closing .transition-loader-container {
   opacity: 0;
   transform: scale(0.9);
-  transition: opacity 0.2s ease;
+  transition: opacity 0.3s ease;
 }
 
 body.page-transitioning {
