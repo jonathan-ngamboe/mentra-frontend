@@ -2,7 +2,6 @@ import { OtpLogin } from '@/components/OtpLogin';
 import { getDictionary, SupportedLocale } from '../../dictionaries';
 import { Clock } from 'lucide-react';
 import { AuroraText } from '@/components/magicui/aurora-text';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default async function CareerMatching({
   params,
@@ -13,7 +12,7 @@ export default async function CareerMatching({
   const dict = await getDictionary(lang);
 
   return (
-    <ScrollArea className="container mx-auto px-4 py-24 md:py-0 self-center">
+    <div className="container mx-auto px-4 py-24 md:py-0 self-center">
       <div className="flex flex-col gap-8 max-w-3xl mx-auto">
         {/* Header Section */}
         <section className="space-y-8">
@@ -44,7 +43,7 @@ export default async function CareerMatching({
         </section>
 
         {/* CTA Section with Visible Wow Effect */}
-        <section className="relative mt-12 mb-8">
+        <section className="relative my-8">
           {/* Card with border glow */}
           <div className="relative border border-gray-200 dark:border-gray-800 rounded-xl shadow-elevated p-8 md:p-10 bg-white dark:bg-gray-900 overflow-hidden">
             <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center justify-between">
@@ -63,6 +62,6 @@ export default async function CareerMatching({
           </div>
         </section>
       </div>
-    </ScrollArea>
+    </div>
   );
 }
