@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import TransitionLink from '@/components/transitions/TransitionLink';
 import Image from 'next/image';
 import { siteName } from '@/resources/config';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 type LogoProps = {
   size?: 'xs' | 's' | 'm' | 'l' | 'xl' | '2xl' | '3xl';
@@ -12,7 +12,15 @@ type LogoProps = {
   href?: string;
   className?: string;
   alt?: string;
+  hideOnScroll?: boolean;
+  id?: string;
 };
+
+declare global {
+  interface Window {
+    previousScrollY?: number;
+  }
+}
 
 export const Logo = ({
   size = 'm',
@@ -20,14 +28,44 @@ export const Logo = ({
   href = '/',
   className = '',
   alt = `${siteName} logo`,
+  hideOnScroll = false,
+  id = 'logo',
 }: LogoProps) => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleScroll = useCallback(() => {
+    const currentScrollPos = window.scrollY;
+    const previousScrollPos = window.previousScrollY || 0;
+
+    // Update visibility based on scroll direction
+    if (previousScrollPos > currentScrollPos) {
+      setVisible(true);
+    } else {
+      setVisible(false);
+    }
+
+    // Store current position for next comparison
+    window.previousScrollY = currentScrollPos;
+  }, []);
+
+  useEffect(() => {
+    if (hideOnScroll) {
+      window.previousScrollY = window.scrollY;
+      window.addEventListener('scroll', handleScroll);
+
+      // Clean up event listener on unmount
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [hideOnScroll, handleScroll]);
 
   // Size mapping to pixel dimensions for icon
   const sizeMap = {
@@ -52,22 +90,43 @@ export const Logo = ({
 
   const logoPath = getLogoPath();
 
+  // Styles communs pour la transition
+  const transitionStyle = {
+    opacity: hideOnScroll ? (visible ? 1 : 0) : 1,
+    transform: hideOnScroll ? (visible ? 'translateY(0)' : 'translateY(-20px)') : 'none',
+    transition: 'opacity 0.3s ease, transform 0.3s ease', // Ajout de la transition ici
+  };
+
   // Create the appropriate logo element based on icon prop
   const logoElement = icon ? (
     // Icon version - show the SVG logo
-    <div className={`relative ${className}`} style={{ width: dimensions.width, height: dimensions.height }}>
+    <div
+      id={id}
+      className={`relative ${className}`}
+      style={{
+        width: dimensions.width,
+        height: dimensions.height,
+        ...transitionStyle,
+      }}
+    >
       <Image
         src={logoPath}
         width={dimensions.width}
         height={dimensions.height}
         alt={alt}
         priority
-        className="transition-opacity duration-300 w-full h-full object-contain"
+        className="w-full h-full object-contain"
       />
     </div>
   ) : (
     // Text version - show the site name as text
-    <div className={`${dimensions.textSize} font-bold ${className}`}>{siteName}</div>
+    <div
+      id={id}
+      className={`${dimensions.textSize} font-bold ${className}`}
+      style={transitionStyle}
+    >
+      {siteName}
+    </div>
   );
 
   // If href is provided, wrap in Link
