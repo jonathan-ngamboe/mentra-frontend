@@ -13,6 +13,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ViewTransitions } from 'next-view-transitions';
 import { ReactLenis } from 'lenis/react'
+import { RevealFx } from '@/components/onceui/RevealFx';
 
 import '../globals.css';
 
@@ -103,7 +104,7 @@ export default async function RootLayout({
               <ReactLenis root>
                 <Background />
                 <Header dictionary={dict} />
-                <main className="flex flex-grow">{children}</main>
+                <main className="flex flex-grow"><RevealFx>{children}</RevealFx></main>
                 <Footer dictionary={dict} />
                 <Toaster position="top-right" />
               </ReactLenis >
