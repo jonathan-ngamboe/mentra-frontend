@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import TransitionLink from '@/components/transitions/TransitionLink';
 import Image from 'next/image';
 import { siteName } from '@/resources/config';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, CSSProperties } from 'react';
 
 type LogoProps = {
   size?: 'xs' | 's' | 'm' | 'l' | 'xl' | '2xl' | '3xl';
@@ -34,6 +34,10 @@ export const Logo = ({
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(true);
+  const lastScrollTop = useRef(0);
+  const scrollDirectionRef = useRef<'up' | 'down'>('up');
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollThreshold = 30; // Minimum scroll distance to trigger change
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -42,27 +46,45 @@ export const Logo = ({
 
   const handleScroll = useCallback(() => {
     const currentScrollPos = window.scrollY;
-    const previousScrollPos = window.previousScrollY || 0;
+    const previousScrollPos = lastScrollTop.current;
+    const scrollDifference = Math.abs(currentScrollPos - previousScrollPos);
 
-    // Update visibility based on scroll direction
-    if (previousScrollPos > currentScrollPos) {
-      setVisible(true);
-    } else {
-      setVisible(false);
+    // Only process if we've scrolled more than the threshold
+    if (scrollDifference > scrollThreshold) {
+      // Determine scroll direction
+      const newDirection = currentScrollPos < previousScrollPos ? 'up' : 'down';
+
+      // Only update if direction has changed
+      if (newDirection !== scrollDirectionRef.current) {
+        scrollDirectionRef.current = newDirection;
+
+        // Clear any existing timer
+        if (scrollTimerRef.current) {
+          clearTimeout(scrollTimerRef.current);
+        }
+
+        // Set a timer to update visibility after a short delay
+        scrollTimerRef.current = setTimeout(() => {
+          setVisible(newDirection === 'up');
+        }, 100); // 100ms delay to prevent flickering
+      }
+
+      // Update the last scroll position
+      lastScrollTop.current = currentScrollPos;
     }
-
-    // Store current position for next comparison
-    window.previousScrollY = currentScrollPos;
   }, []);
 
   useEffect(() => {
     if (hideOnScroll) {
-      window.previousScrollY = window.scrollY;
-      window.addEventListener('scroll', handleScroll);
+      lastScrollTop.current = window.scrollY;
+      window.addEventListener('scroll', handleScroll, { passive: true });
 
-      // Clean up event listener on unmount
+      // Clean up event listener and timer on unmount
       return () => {
         window.removeEventListener('scroll', handleScroll);
+        if (scrollTimerRef.current) {
+          clearTimeout(scrollTimerRef.current);
+        }
       };
     }
   }, [hideOnScroll, handleScroll]);
@@ -90,11 +112,11 @@ export const Logo = ({
 
   const logoPath = getLogoPath();
 
-  // Styles communs pour la transition
-  const transitionStyle = {
+  const transitionStyle: CSSProperties = {
     opacity: hideOnScroll ? (visible ? 1 : 0) : 1,
     transform: hideOnScroll ? (visible ? 'translateY(0)' : 'translateY(-20px)') : 'none',
-    transition: 'opacity 0.3s ease, transform 0.3s ease', // Ajout de la transition ici
+    transition: 'opacity 0.4s ease, transform 0.4s ease',
+    pointerEvents: hideOnScroll && !visible ? 'none' : 'auto',
   };
 
   // Create the appropriate logo element based on icon prop
@@ -103,11 +125,13 @@ export const Logo = ({
     <div
       id={id}
       className={`relative ${className}`}
-      style={{
-        width: dimensions.width,
-        height: dimensions.height,
-        ...transitionStyle,
-      }}
+      style={
+        {
+          width: dimensions.width,
+          height: dimensions.height,
+          ...transitionStyle,
+        } as CSSProperties
+      }
     >
       <Image
         src={logoPath}
