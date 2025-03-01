@@ -77,7 +77,7 @@ const RevealFx = forwardRef<HTMLDivElement, RevealFxProps>(
 
     return (
       <div
-        className={`z-0 w-full relative flex justify-center ${styles.revealFx} ${
+        className={`pointer-events-auto w-full relative flex justify-center ${styles.revealFx} ${
           isRevealed ? styles.revealed : styles.hidden
         } ${className || ''}`}
         ref={ref}
