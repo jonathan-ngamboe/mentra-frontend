@@ -2,6 +2,7 @@ import { OtpLogin } from '@/components/OtpLogin';
 import { getDictionary, SupportedLocale } from '../../dictionaries';
 import { Clock } from 'lucide-react';
 import { AuroraText } from '@/components/magicui/aurora-text';
+import { BorderBeam } from '@/components/magicui/border-beam';
 
 export default async function CareerMatching({
   params,
@@ -59,6 +60,17 @@ export default async function CareerMatching({
                 <OtpLogin dictionary={dict} onSuccessRedirect="/services/career-matching/test" />
               </div>
             </div>
+            <BorderBeam
+              duration={12}
+              size={200}
+              className="from-transparent via-red-500 to-transparent"
+            />
+            <BorderBeam
+              duration={12}
+              delay={6}
+              size={200}
+              className="from-transparent via-blue-500 to-transparent"
+            />
           </div>
         </section>
       </div>
