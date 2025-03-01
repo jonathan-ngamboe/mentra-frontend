@@ -84,3 +84,10 @@ export function hslToHex(h: number, s: number, l: number): string {
   
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
+
+
+//Extract pathname without locale (e.g., /en/about -> /about and /en -> /)
+export function getPathnameWithoutLocale(pathname: string): string {
+  const locale = pathname.split('/')[1];
+  return pathname.replace(`/${locale}`, '');
+}
