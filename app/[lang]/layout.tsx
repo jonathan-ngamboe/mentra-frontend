@@ -12,7 +12,7 @@ import { Background } from '@/components/Background';
 import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ViewTransitions } from 'next-view-transitions';
-import { ReactLenis } from 'lenis/react'
+import { ReactLenis } from 'lenis/react';
 import { RevealFx } from '@/components/onceui/RevealFx';
 
 import '../globals.css';
@@ -93,7 +93,7 @@ export default async function RootLayout({
         className={cn(primary.variable, code.variable, 'scroll-smooth', 'antialiased')}
         suppressHydrationWarning
       >
-        <body className="relative flex flex-col min-h-screen bg-background font-sans transition-colors duration-300 overflow-hidden">
+        <body className="relative flex flex-col min-h-screen bg-background font-sans transition-colors duration-300 overflow-x-hidden scrollbar-hide">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -101,13 +101,15 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <TooltipProvider delayDuration={0}>
-              <ReactLenis root>
+              <ReactLenis root options={{ syncTouch: true }}>
                 <Background />
                 <Header dictionary={dict} />
-                <main className="flex flex-grow"><RevealFx>{children}</RevealFx></main>
+                <main className="flex flex-grow">
+                  <RevealFx>{children}</RevealFx>
+                </main>
                 <Footer dictionary={dict} />
                 <Toaster position="top-right" />
-              </ReactLenis >
+              </ReactLenis>
             </TooltipProvider>
           </ThemeProvider>
         </body>
