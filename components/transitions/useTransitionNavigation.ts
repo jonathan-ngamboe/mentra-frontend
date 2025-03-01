@@ -3,6 +3,7 @@
 import { useTransitionRouter } from 'next-view-transitions';
 import { catTransition } from './effects';
 import { isExternalUrl } from '@/lib/utils';
+import { getPathnameWithoutLocale } from '@/lib/utils';
 
 /**
  * Hook to provide transition navigation functions
@@ -40,7 +41,7 @@ export function useTransitionNavigation() {
     e.preventDefault();
     if (isExternalUrl(href)) {
       window.open(href, '_blank');
-    } else if (href !== window.location.pathname) {
+    } else if (href !== getPathnameWithoutLocale(window.location.pathname)) {
       await navigateWithTransition(href);
     }
   };
