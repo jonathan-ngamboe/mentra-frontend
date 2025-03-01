@@ -1,5 +1,6 @@
 {
     "welcome": "Bienvenue",
+    "pageUnderConstruction": "Cette page est en construction",
     "navigation": {
       "home": "Accueil",
       "services": "Services"
@@ -55,12 +56,11 @@
     "error": {
       "default": "Une erreur est survenue",
       "access_denied": "Accès refusé",
-      "otp_expired": "Le lien de connexion a expiré",
+      "otp_expired": "Code expiré ou invalide",
       "email_link_invalid": "Le lien de connexion est invalide",
       "email_not_confirmed": "Ton adresse email n'a pas été confirmée",
       "user_not_found": "Utilisateur introuvable",
       "invalid_credentials": "Identifiants invalides",
-      "otp_expired_description": "Le lien de connexion a expiré ou est invalide. Réessaie en demandant un nouveau lien.",
       "access_denied_description": "Tu n'as pas les droits nécessaires pour accéder à cette page.",
       "rateLimitExceeded": "Trop de tentatives. Réessaie plus tard."
     },

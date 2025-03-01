@@ -1,5 +1,6 @@
 {
     "welcome": "Welcome",
+    "pageUnderConstruction": "This page is under construction",
     "navigation": {
       "home": "Home",
       "services": "Services"
@@ -56,14 +57,13 @@
     "error": {
       "default": "An error occurred",
       "access_denied": "Access denied",
-      "otp_expired": "Login link expired",
+      "otp_expired": "Code expired or invalid",
       "email_link_invalid": "Login link invalid",
       "email_not_confirmed": "Your email address has not been confirmed",
       "user_not_found": "User not found",
       "invalid_credentials": "Invalid credentials",
-      "otp_expired_description": "The login link has expired or is invalid. Try again by requesting a new link.",
-      "access_denied_description": "You do not have the necessary rights to access this page.",
-      "rateLimitExceeded": "Too many requests. Please try again later."
+      "access_denied_description": "You do not have the necessary rights to access this page",
+      "rateLimitExceeded": "Too many requests. Please try again later"
     },
     "login": {
       "welcome": "👋 Nice to see you!",

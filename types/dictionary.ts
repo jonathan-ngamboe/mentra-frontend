@@ -1,5 +1,6 @@
 export interface Dictionary {
     welcome: string;
+    pageUnderConstruction: string;
     navigation: {
       home: string;
       services: string; 
@@ -59,7 +60,6 @@ export interface Dictionary {
       email_not_confirmed: string;
       user_not_found: string;
       invalid_credentials: string;
-      otp_expired_description: string;
       access_denied_description: string;
       rateLimitExceeded: string;
     };
