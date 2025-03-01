@@ -6,8 +6,8 @@ type ResultsProps = {
 
 export function Results({ dictionary }: ResultsProps) {
   return (
-    <div>
-      <h1>Page under construction</h1>
+    <div className="flex flex-col gap-4 items-center justify-center uppercase">
+      <h3>{dictionary.pageUnderConstruction}</h3>
     </div>
   );
 }
