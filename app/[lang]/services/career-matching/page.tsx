@@ -31,7 +31,7 @@ export default async function CareerMatching({
             </div>
           </div>
 
-          <div className="space-y-4 text-left">
+          <div className="flex flex-col gap-4 text-left">
             <h2 className="text-xl md:text-2xl font-bold">
               {dict.services.careerMatching.subtitle}
             </h2>
@@ -43,7 +43,7 @@ export default async function CareerMatching({
         </section>
 
         {/* CTA Section with Visible Wow Effect */}
-        <section className="relative my-8">
+        <section className="relative mt-4">
           {/* Card with border glow */}
           <div className="relative border border-gray-200 dark:border-gray-800 rounded-xl shadow-elevated p-8 md:p-10 bg-white dark:bg-gray-900 overflow-hidden">
             <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center justify-between">
