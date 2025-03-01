@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install",
+    "prepare": "husky",
     "type-check": "tsc --noEmit",
     "validate": "pnpm lint && pnpm type-check",
     "test": "echo \"No tests configured yet\""
@@ -79,5 +79,10 @@
     "prettier": "^3.2.5",
     "tailwindcss": "^4.0.8",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }
