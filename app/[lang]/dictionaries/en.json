@@ -99,5 +99,17 @@
         "otpLength": "The code must contain 6 characters",
         "otpOnlyDigits": "The code must contain only digits"
       }
+    },
+    "user": {
+      "firstname": "First name"
+    },
+    "form": {
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "validation": {
+        "required": "required",
+        "userNameLength": "The field must not exceed 50 characters",
+        "onlyLetters": "Only letters are allowed"
+      }
     }
   }

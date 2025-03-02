@@ -98,5 +98,17 @@
         "otpLength": "Le code doit contenir 6 caractères",
         "otpOnlyDigits": "Le code doit contenir uniquement des chiffres"
       }
+    },
+    "user":{
+      "firstname": "Prénom"
+    },
+    "form": {
+      "submit": "Envoyer",
+      "submitting": "Envoi en cours...",
+      "validation": {
+        "required": "requis",
+        "userNameLength": "Le champ ne doit pas dépasser 50 caractères",
+        "onlyLetters": "Seuls les lettres sont autorisées"
+      }
     }
   }
