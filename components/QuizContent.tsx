@@ -8,6 +8,6 @@ export function QuizContent() {
 
   useEffect(() => {
     setTheme('dark');
-  }, []);
+  }, [setTheme]);
   return null;
 }
