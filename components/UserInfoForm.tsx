@@ -15,7 +15,7 @@ type UserInfoFormProps = {
 };
 
 export function UserInfoForm({ dictionary }: UserInfoFormProps) {
-  const [firstName, setFirstname] = useState('');
+  //const [firstName, setFirstname] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<UserFormValues>({
@@ -25,11 +25,27 @@ export function UserInfoForm({ dictionary }: UserInfoFormProps) {
     },
   });
 
-  function onSubmit(data: UserFormValues) {}
+  function onSubmit(data: UserFormValues) {
+    console.log(data);  // eslint-disable-line no-console
+  }
+
+  const handleSubmit = async (data: UserFormValues) => {
+    setIsSubmitting(true);
+
+    try {
+      onSubmit(data);
+      // Optionnel : réinitialiser le formulaire après succès
+      form.reset();
+    } catch (error) {
+      console.error('Form submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pointer-events-auto">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 pointer-events-auto">
         <FormField
           control={form.control}
           name="firstname"
