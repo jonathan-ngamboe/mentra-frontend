@@ -17,7 +17,7 @@ type ParticlesBackgroundProps = {
 };
 
 export function ParticlesBackground({
-  color = '#cccccc',
+  color = '',
   particleCount = 200,
   particleSpread = 10,
   speed = 0.1,
@@ -29,7 +29,7 @@ export function ParticlesBackground({
 }: ParticlesBackgroundProps) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [particlesColor, setParticlesColor] = useState<string>(color);
+  const [particlesColor, setParticlesColor] = useState<string>('#cccccc');
   const [key, setKey] = useState(0); // Key to force the remount
 
   useEffect(() => {
