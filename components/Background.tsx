@@ -1,4 +1,5 @@
-import SplashCursor from "@/components/reactbits/Animations/SplashCursor/SplashCursor";
+import SplashCursor from '@/components/reactbits/Animations/SplashCursor/SplashCursor';
+import { ParticlesBackground } from '@/components/ParticlesBackground';
 
 export function Background() {
   return (
@@ -22,6 +23,12 @@ export function Background() {
         <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-white/10 to-transparent dark:from-white/0" />
       </div>
 
+      {/* Particles */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <ParticlesBackground/>
+      </div>
+
+      {/* Splash cursor */}
       <SplashCursor TRANSPARENT />
     </>
   );
