@@ -1,13 +1,18 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function QuizContent() {
   const { setTheme } = useTheme();
+  const [themeSet, setThemeSet] = useState(false);
 
   useEffect(() => {
-    setTheme('dark');
-  }, [setTheme]);
+    if (!themeSet) {
+      setTheme('dark');
+      setThemeSet(true);
+    }
+  }, [setTheme, themeSet]);
+
   return null;
 }
