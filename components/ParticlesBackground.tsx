@@ -25,7 +25,7 @@ export function ParticlesBackground() {
 
   if (!mounted) return null;
 
-  return (
+  return particlesContext.showParticles ? (
     <div className="absolute inset-0 pointer-events-none">
       <Particles
         key={particlesContext.key} // Use the key to force the remount
@@ -42,5 +42,5 @@ export function ParticlesBackground() {
         particleHoverFactor={particlesContext.particleHoverFactor}
       />
     </div>
-  );
+  ) : null;
 }

@@ -30,6 +30,8 @@ const ParticlesContext = createContext<
       setSizeRandomness: (sizeRandomness: number) => void;
       particleHoverFactor: number;
       setParticleHoverFactor: (particleHoverFactor: number) => void;
+      showParticles: boolean;
+      setShowParticles: (show: boolean) => void;
     }
   | undefined
 >(undefined);
@@ -49,6 +51,7 @@ export function ParticlesProvider({ children }: { children: React.ReactNode }) {
   const [sizeRandomness, setSizeRandomness] = useState(0);
   const [particleHoverFactor, setParticleHoverFactor] = useState(0.5);
   const [mounted, setMounted] = useState(false);
+  const [showParticles, setShowParticles] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -72,6 +75,7 @@ export function ParticlesProvider({ children }: { children: React.ReactNode }) {
     cameraDistance,
     sizeRandomness,
     particleHoverFactor,
+    showParticles,
   ]);
 
   return (
@@ -103,6 +107,8 @@ export function ParticlesProvider({ children }: { children: React.ReactNode }) {
         setSizeRandomness,
         particleHoverFactor,
         setParticleHoverFactor,
+        showParticles,
+        setShowParticles,
       }}
     >
       {children}
