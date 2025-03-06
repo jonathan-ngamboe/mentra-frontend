@@ -12,7 +12,6 @@ import { Background } from '@/components/Background';
 import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ViewTransitions } from 'next-view-transitions';
-import { ReactLenis } from 'lenis/react';
 import { RevealFx } from '@/components/onceui/RevealFx';
 import { ParticlesProvider } from '@/contexts/ParticlesContext';
 
@@ -103,15 +102,13 @@ export default async function RootLayout({
           >
             <TooltipProvider delayDuration={0}>
               <ParticlesProvider>
-                <ReactLenis root options={{ syncTouch: true }}>
-                  <Background />
-                  <Header dictionary={dict} />
-                  <main className="flex flex-grow">
-                    <RevealFx>{children}</RevealFx>
-                  </main>
-                  <Footer dictionary={dict} />
-                  <Toaster position="top-right" />
-                </ReactLenis>
+                <Background />
+                <Header dictionary={dict} />
+                <main className="flex flex-grow">
+                  <RevealFx>{children}</RevealFx>
+                </main>
+                <Footer dictionary={dict} />
+                <Toaster position="top-right" />
               </ParticlesProvider>
             </TooltipProvider>
           </ThemeProvider>
