@@ -36,8 +36,12 @@ export interface Dictionary {
   };
   services: {
     title: string;
+    description: string;
+    prefix: string;
+    end: string;
     careerMatching: {
       title: string;
+      action: string;
       subtitle: string;
       description: string;
       duration: string;
@@ -50,6 +54,12 @@ export interface Dictionary {
         title: string;
         description: string;
       };
+    };
+    events: {
+      action: string;
+    };
+    doIt: {
+      action: string;
     };
   };
   error: {

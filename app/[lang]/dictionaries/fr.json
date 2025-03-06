@@ -37,8 +37,12 @@
     },
     "services": {
       "title": "Services",
+      "description": "scroll pour découvrir nos services",
+      "prefix": "tu peux",
+      "end": "fin",
       "careerMatching": {
-        "title": "Orientation pro",
+        "title": "Orientation professionnelle",
+        "action": "Trouver ton métier",
         "subtitle": "Trouve ta voie professionnelle en quelques clics",
         "description": "Découvre le métier fait pour toi à travers un parcours simple et personnalisé qui analyse ta personnalité, tes compétences et tes aspirations pour te proposer les meilleures opportunités professionnelles.",
         "duration": "15-20 minutes",
@@ -51,6 +55,12 @@
           "title": "Résultats",
           "description": "Voici les métiers qui te correspondent le plus."
         }
+      },
+      "events": {
+        "action": "Booster ta motiv"
+      },
+      "doIt": {
+        "action": "le faire"
       }
     },
     "error": {
