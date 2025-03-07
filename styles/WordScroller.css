@@ -113,6 +113,8 @@
   flex-direction: column;
   width: 100%;
   margin: 0;
+  will-change: transform;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
 }
 
 .word-item {
@@ -141,10 +143,6 @@
 }
 
 /* Main section styling */
-main.word-scroller {
-  width: 100%;
-}
-
 section.content {
   --font-level: 6;
   display: flex;
@@ -276,6 +274,7 @@ li:last-of-type {
   }
 }
 
+/* Mise à jour des media queries pour améliorer l'expérience mobile */
 @media (max-width: 768px) {
   section.content {
     padding-left: 2rem;
@@ -287,10 +286,20 @@ li:last-of-type {
 
   [data-snap='true'] li {
     scroll-snap-align: center;
-    scroll-snap-stop: normal; 
-    padding-top: 1em; 
-    padding-bottom: 1em;
+    scroll-snap-stop: always;
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
   }
+}
+
+[data-touch-device='true'] li.word-item {
+  padding-top: 1em;
+  padding-bottom: 1em;
+  touch-action: pan-y;
+}
+
+[data-touch-device='true'] section.content {
+  gap: 1.5rem;
 }
 
 @media (max-width: 480px) {

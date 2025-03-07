@@ -24,9 +24,10 @@ export default function WordScroller({
   const itemsRef = useRef<HTMLLIElement[]>([]);
   const [mounted, setMounted] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { navigateWithTransition } = useTransitionNavigation();
 
-  // Ensure words is always an array (defensive programming)
+  // Ensure words is always an array
   const wordsArray = Array.isArray(words) ? words : [];
 
   // Normalize words to handle both string[] and WordItem[]
@@ -34,7 +35,7 @@ export default function WordScroller({
     typeof item === 'string' ? { text: item, link: '#' } : item
   );
 
-  // Get the text of the last word for accessibility - with null checking
+  // Get the text of the last word for accessibility
   const lastWordText =
     normalizedWords.length > 0 ? normalizedWords[normalizedWords.length - 1]?.text || '' : '';
 
@@ -65,18 +66,9 @@ export default function WordScroller({
 
     // Check if device is touch-enabled
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    document.documentElement.dataset.touchDevice = isTouchDevice ? 'true' : 'false';
 
-    if (isTouchDevice) {
-      document.documentElement.dataset.touchDevice = 'true';
-    }
-
-    // Set up animations
-    let items: HTMLLIElement[] = [];
-    let scrollerScrub: ScrollTrigger | null = null;
-    let dimmerScrub: ScrollTrigger | null = null;
-    let chromaEntry: gsap.core.Tween | null = null;
-    let chromaExit: gsap.core.Tween | null = null;
-
+    // Set up CSS variables and data attributes
     const updateDOM = () => {
       if (!mainRef.current) return;
       const root = document.documentElement;
@@ -99,10 +91,82 @@ export default function WordScroller({
       '(animation-timeline: scroll()) and (animation-range: 0% 100%)'
     );
 
-    // If not supported or explicitly disabled, use GSAP
+    // Cleanup variables for animations
+    let scrollerScrub: ScrollTrigger | null = null;
+    let dimmerScrub: ScrollTrigger | null = null;
+    let chromaEntry: gsap.core.Tween | null = null;
+    let chromaExit: gsap.core.Tween | null = null;
+
+    // Determine active word based on scroll position
+    const updateActiveWord = () => {
+      if (!mainRef.current) return;
+
+      const items = itemsRef.current.filter(Boolean);
+      if (items.length === 0) return;
+
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      const viewportCenter = window.innerHeight / 2;
+
+      items.forEach((item, index) => {
+        const rect = item.getBoundingClientRect();
+        const itemCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(itemCenter - viewportCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      if (closestIndex !== activeIndex) {
+        setActiveIndex(closestIndex);
+      }
+    };
+
+    // Handle scroll behavior for last item
+    const handleLastItemVisibility = () => {
+      if (!mainRef.current) return;
+
+      const items = itemsRef.current.filter(Boolean);
+      if (items.length === 0) return;
+
+      // Only apply when last item is active
+      if (activeIndex !== items.length - 1) return;
+
+      const lastItem = items[items.length - 1];
+      if (!lastItem) return;
+
+      const lastRect = lastItem.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      // Only scroll back up if we're significantly past the last item
+      if (lastRect.bottom < viewportHeight / 2 - lastRect.height) {
+        lastItem.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
+    };
+
+    // Create unified scroll handler with debounce
+    const handleScroll = () => {
+      updateActiveWord();
+
+      // Clear any existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // Setup debounced scroll end detection
+      scrollTimeoutRef.current = setTimeout(() => {
+        handleLastItemVisibility();
+      }, 200);
+    };
+
+    // If CSS scroll animations not supported, use GSAP
     if (!hasScrollAnimations) {
-      // Get all list items
-      items = itemsRef.current.filter(Boolean);
+      const items = itemsRef.current.filter(Boolean);
 
       if (items.length > 0) {
         // Set initial opacity states - first item visible, others dimmed
@@ -209,98 +273,41 @@ export default function WordScroller({
           gsap.set(document.documentElement, { '--chroma': 0 });
         }
       }
-    } else {
-      // For scroll-driven animations, add scroll event listener to track active index
-      const handleScroll = () => {
-        if (!mainRef.current) return;
+    }
 
-        const items = itemsRef.current.filter(Boolean);
-        let closestIndex = 0;
-        let closestDistance = Infinity;
+    // Add scroll event listener with passive option for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
-        const centerOffset = isTouchDevice ? 0 : 0;
-
-        items.forEach((item, index) => {
-          const rect = item.getBoundingClientRect();
-          const itemCenter = rect.top + rect.height / 2;
-          const targetPosition = window.innerHeight / 2 + centerOffset;
-          const distance = Math.abs(itemCenter - targetPosition);
-
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestIndex = index;
-          }
-        });
-
-        setActiveIndex(closestIndex);
-      };
-
-      let isScrolling = false;
-      let scrollTimeout: ReturnType<typeof setTimeout>;
-
-      const handleLastItemVisibility = () => {
-        if (!mainRef.current) return;
-
-        const items = itemsRef.current.filter(Boolean);
-        if (items.length === 0) return;
-
-        if (activeIndex !== items.length - 1) return;
-
-        const lastItem = items[items.length - 1];
-        if (!lastItem) return;
-
-        const lastRect = lastItem.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const threshold = lastRect.height * 1.5; 
-
-        if (lastRect.bottom < viewportHeight / 2 - threshold) {
-          lastItem.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-          });
-        }
-      };
-
-      window.addEventListener('scroll', () => {
-        handleScroll();
-
-        clearTimeout(scrollTimeout);
-        isScrolling = true;
-
-        scrollTimeout = setTimeout(() => {
-          isScrolling = false;
-          handleLastItemVisibility();
-        }, 150);
-      });
-
-      if (isTouchDevice) {
-        const handleTouchEnd = () => {
-          // Delay longer to let inertia finish
-          setTimeout(handleScroll, 250);
-        };
-
-        window.addEventListener('touchend', handleTouchEnd);
-
-        return () => {
-          window.removeEventListener('scroll', handleScroll);
-          window.removeEventListener('touchend', handleTouchEnd);
-        };
-      }
-
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-        if (isTouchDevice) window.removeEventListener('touchend', handleScroll);
-      };
+    // Special handling for touch devices
+    if (isTouchDevice) {
+      // Add touchend for better mobile UX
+      window.addEventListener(
+        'touchend',
+        () => {
+          // Give time for inertial scrolling to settle
+          setTimeout(updateActiveWord, 100);
+        },
+        { passive: true }
+      );
     }
 
     // Return cleanup function
     return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (isTouchDevice) {
+        window.removeEventListener('touchend', updateActiveWord);
+      }
+
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
       if (scrollerScrub) scrollerScrub.kill();
       if (dimmerScrub) dimmerScrub.kill();
       if (chromaEntry && chromaEntry.scrollTrigger) chromaEntry.scrollTrigger.kill();
       if (chromaExit && chromaExit.scrollTrigger) chromaExit.scrollTrigger.kill();
     };
-  }, [animate, debug, endHue, showScrollbar, snap, startHue, words]);
+  }, [animate, debug, endHue, showScrollbar, snap, startHue, activeIndex]);
 
   // Don't render until client-side to prevent hydration issues
   if (!mounted) return null;
