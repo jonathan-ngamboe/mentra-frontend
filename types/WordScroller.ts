@@ -54,4 +54,9 @@ export interface WordScrollerProps {
    * Additional CSS class names
    */
   className?: string;
+
+  /**
+   * The last word to display for accessibility
+   */
+  endWord: string;
 }
