@@ -77,7 +77,7 @@ export default function WordScroller({
     let chromaEntry: gsap.core.Tween | null = null;
     let chromaExit: gsap.core.Tween | null = null;
 
-    const container = document.querySelector(`.${styles.wordScroller}`) as HTMLElement;
+    const container = document.querySelector(`.${styles.wordScroller}`) as HTMLElement; 
     if (container) {
       container.classList.add('wordScrollerContainer');
       container.dataset.snap = snap.toString();
