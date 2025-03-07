@@ -89,10 +89,8 @@
 /* Badges */
 .comingSoonBadge {
   position: absolute;
-  top: 0;
-  right: -3rem;
-  font-size: 0.6rem;
-  padding: 0.15rem 0.4rem;
+  top: 0.5rem;
+  right: 3rem;
   opacity: 0.8;
 }
 
