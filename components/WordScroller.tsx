@@ -6,8 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Badge } from '@/components/ui/badge';
 import { useTransitionNavigation } from '@/components/transitions/useTransitionNavigation';
 import { WordScrollerProps, WordItem } from '@/types/WordScroller';
-import '@/styles/wordScroller.css';
 import styles from '@/styles/WordScroller.module.css';
+import '@/styles/wordScroller.css';
 
 export default function WordScroller({
   prefix = 'you can',
