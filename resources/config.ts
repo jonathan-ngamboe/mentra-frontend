@@ -65,7 +65,7 @@ const services = [
   {
     labelKey: 'services.events.action',
     link: '',
-    soon: true,
+    badge: 'badges.comingSoon',
   },
   // Always keep doIt as the last item
   {
