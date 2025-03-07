@@ -2,7 +2,7 @@ import { getDictionary, SupportedLocale } from '../dictionaries';
 import { services } from '@/resources/config';
 import WordScroller from '@/components/WordScroller';
 import { getDictionaryValue } from '@/lib/utils';
-import { Suspense } from 'react';
+
 
 export default async function Services({ params }: { params: Promise<{ lang: SupportedLocale }> }) {
   const lang = (await params).lang;
