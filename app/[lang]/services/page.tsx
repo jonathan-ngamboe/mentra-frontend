@@ -24,29 +24,24 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
           className="relative flex flex-col items-center justify-center h-[100svh] overflow-hidden snap-start"
           id="header-section"
         >
-          <div className="absolute inset-0 bg-gradient-radial from-background/5 to-background/80 z-0"></div>
-
-          <div className="relative z-10 max-w-4xl px-4 md:px-8 text-center">
-            <span className="block text-sm md:text-base uppercase tracking-widest text-foreground/60 mb-4 font-medium">
+          <div className="relative max-w-4xl px-4 md:px-8 text-center">
+            <h1 className="block text-sm md:text-base uppercase tracking-widest text-foreground/60 mb-4 font-medium">
               {dict.services.title}
-            </span>
+            </h1>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
+            <div className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-gradient">
               <span className="relative inline-block">
-                <span className="relative z-10">{dict.services.description}</span>
+                <h2 className="relative">{dict.services.description}</h2>
                 <span className="absolute -bottom-2 left-0 w-full h-3 bg-primary transform -skew-x-12"></span>
               </span>
-            </h1>
+            </div>
 
             <p className="mt-8 text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto">
               {dict.services.action}
             </p>
           </div>
 
-          <div
-            className="absolute bottom-20 md:bottom-8 left-0 right-0 mx-auto w-10 h-10 flex items-center justify-center rounded-full transition-colors"
-            aria-label={dict.services.action}
-          >
+          <div className="absolute bottom-20 md:bottom-8 left-0 right-0 mx-auto w-10 h-10 flex items-center justify-center rounded-full transition-colors">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -64,7 +59,7 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
           </div>
         </header>
 
-        <div id="word-scroller-section" className="scroll-mt-4 snap-start">
+        <div className="scroll-mt-4 snap-start">
           <Suspense
             fallback={
               <div className="min-h-screen flex items-center justify-center">
@@ -72,13 +67,13 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
               </div>
             }
           >
-            <WordScroller prefix={dict.services.prefix} words={getServiceItems()} />
+            <WordScroller
+              prefix={dict.services.prefix}
+              words={getServiceItems()}
+              endWord={dict.services.end}
+            />
           </Suspense>
         </div>
-
-        <section className="flex items-center justify-center min-h-screen snap-start">
-          <h2 className="text-6xl font-bold">{dict.services.end}.</h2>
-        </section>
       </div>
     </div>
   );
