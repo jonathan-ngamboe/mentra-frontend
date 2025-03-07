@@ -1,6 +1,15 @@
 export interface Dictionary {
   welcome: string;
   pageUnderConstruction: string;
+  common: {
+    discover: string;
+    contact: string;
+    loading: string;
+  };
+  badges: {
+    new: string;
+    comingSoon: string;
+  };
   navigation: {
     home: string;
     services: string;
@@ -36,6 +45,7 @@ export interface Dictionary {
   };
   services: {
     title: string;
+    action: string;
     description: string;
     prefix: string;
     end: string;

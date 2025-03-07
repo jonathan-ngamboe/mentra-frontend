@@ -1,6 +1,15 @@
 {
     "welcome": "Bienvenue",
     "pageUnderConstruction": "Cette page est en construction",
+    "common": {
+      "discover": "Découvrir",
+      "contact": "Contact",
+      "loading": "Chargement..."
+    },
+    "badges": {
+      "new": "Nouveau",
+      "comingSoon": "Prochainement"
+    },
     "navigation": {
       "home": "Accueil",
       "services": "Services"
@@ -37,12 +46,13 @@
     },
     "services": {
       "title": "Services",
-      "description": "scroll pour découvrir nos services",
+      "description": "Des solutions pour t'accompagner dans ton parcours professionnel",
+      "action": "Scroll pour découvrir nos services",
       "prefix": "tu peux",
       "end": "fin",
       "careerMatching": {
         "title": "Orientation professionnelle",
-        "action": "Trouver ton métier",
+        "action": "Trouver ta voie",
         "subtitle": "Trouve ta voie professionnelle en quelques clics",
         "description": "Découvre le métier fait pour toi à travers un parcours simple et personnalisé qui analyse ta personnalité, tes compétences et tes aspirations pour te proposer les meilleures opportunités professionnelles.",
         "duration": "15-20 minutes",

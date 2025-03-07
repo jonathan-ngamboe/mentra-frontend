@@ -1,6 +1,15 @@
 {
     "welcome": "Welcome",
     "pageUnderConstruction": "This page is under construction",
+    "common": {
+      "discover": "Discover",
+      "contact": "Contact",
+      "loading": "Loading..."
+    },
+    "badges": {
+      "new": "New",
+      "comingSoon": "Coming soon"
+    },
     "navigation": {
       "home": "Home",
       "services": "Services"
@@ -37,13 +46,14 @@
     },
     "services": {
       "title": "Services",
-      "description": "scroll to discover our services",
+      "description": "Solutions to support you in your career",
+      "action": "Scroll to discover our services",
       "prefix": "you can",
       "end": "end",
       "careerMatching": {
         "title": "Career matching",
         "subtitle": "Find your career path in just a few clicks",
-        "action": "Find your job",
+        "action": "Find your career",
         "duration": "15-20 minutes",
         "description": "Discover the job that suits you through a simple and personalized journey that analyzes your personality, skills and aspirations to offer you the best professional opportunities.",
         "cta": "Get started now",
