@@ -21,7 +21,7 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
     <div className="container mx-auto self-center">
       <div className="flex flex-col mx-auto">
         <header
-          className="relative flex flex-col items-center justify-center h-[100svh] overflow-hidden snap-start"
+          className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden snap-start"
           id="header-section"
         >
           <div className="relative max-w-4xl px-4 md:px-8 text-center">
