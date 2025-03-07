@@ -65,7 +65,6 @@ export default function WordScroller({
     const root = document.documentElement;
     root.dataset.syncScrollbar = showScrollbar.toString();
     root.dataset.animate = animate.toString();
-    root.dataset.snap = snap.toString();
     root.dataset.debug = debug.toString();
     root.style.setProperty('--start', startHue.toString());
     root.style.setProperty('--hue', startHue.toString());
@@ -77,6 +76,12 @@ export default function WordScroller({
     let dimmerScrub: ScrollTrigger | null = null;
     let chromaEntry: gsap.core.Tween | null = null;
     let chromaExit: gsap.core.Tween | null = null;
+
+    const container = document.querySelector(`.${styles.wordScroller}`) as HTMLElement;
+    if (container) {
+      container.classList.add('wordScrollerContainer');
+      container.dataset.snap = snap.toString();
+    }
 
     // Use GSAP if CSS scroll animations not supported
     if (!CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
@@ -208,7 +213,7 @@ export default function WordScroller({
                 if (el) itemsRef.current[index] = el;
               }}
               style={{ '--i': index, cursor: 'pointer' } as React.CSSProperties}
-              className={ `${index === normalizedWords.length - 1 ? styles.lastWord : ''} relative`}
+              className={`${index === normalizedWords.length - 1 ? styles.lastWord : ''} relative`}
               onClick={() => handleWordClick(index, word.link)}
             >
               {word.text}.
