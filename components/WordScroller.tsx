@@ -6,7 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Badge } from '@/components/ui/badge';
 import { useTransitionNavigation } from '@/components/transitions/useTransitionNavigation';
 import { WordScrollerProps, WordItem } from '@/types/WordScroller';
-import '@/styles/WordScroller.css';
+import '@/styles/wordScroller.css';
+import styles from '@/styles/WordScroller.module.css';
 
 export default function WordScroller({
   prefix = 'you can',
@@ -16,7 +17,7 @@ export default function WordScroller({
   startHue = Math.floor(Math.random() * 100),
   endHue = Math.floor(Math.random() * 100) + 900,
   showScrollbar = true,
-  debug = true,
+  debug = false,
   className = '',
   endWord = '',
 }: WordScrollerProps) {
@@ -37,17 +38,21 @@ export default function WordScroller({
 
   // Handle word click - either scroll to it or navigate to link
   const handleWordClick = (index: number, link: string) => {
-    if (index === activeIndex && link !== '') {
-      // If already active, navigate to link
+    if (link !== '') {
+      // If a link is set, navigate to that link
       navigateWithTransition(link);
     } else {
+      // Otherwise, update active index without forcing scroll
       setActiveIndex(index);
-      // Otherwise scroll to the word
+      // smooth scroll without disrupting snap scroll
       const element = itemsRef.current[index];
       if (element) {
-        element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
+        // Use requestAnimationFrame to avoid conflicts
+        requestAnimationFrame(() => {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
         });
       }
     }
@@ -79,104 +84,106 @@ export default function WordScroller({
 
     // Use GSAP if CSS scroll animations not supported
     if (!CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
-      // Get list items
-      items = gsap.utils.toArray<HTMLElement>('ul li');
+      const wordScrollerElement = document.querySelector(`.${styles.wordScroller}`);
+      if (wordScrollerElement) {
+        items = gsap.utils.toArray<HTMLElement>(`.${styles.wordScroller} ul li`);
 
-      // Set initial opacity
-      gsap.set(items, { opacity: (i: number) => (i !== 0 ? 0.2 : 1) });
+        // Set initial opacity
+        gsap.set(items, { opacity: (i: number) => (i !== 0 ? 0.2 : 1) });
 
-      // Create opacity timeline
-      const dimmer = gsap
-        .timeline()
-        .to(items.slice(1), {
-          opacity: 1,
-          stagger: 0.5,
-        })
-        .to(
-          items.slice(0, items.length - 1),
-          {
-            opacity: 0.2,
+        // Create opacity timeline
+        const dimmer = gsap
+          .timeline()
+          .to(items.slice(1), {
+            opacity: 1,
             stagger: 0.5,
+          })
+          .to(
+            items.slice(0, items.length - 1),
+            {
+              opacity: 0.2,
+              stagger: 0.5,
+            },
+            0
+          );
+
+        // Create scroll trigger for opacity
+        dimmerScrub = ScrollTrigger.create({
+          trigger: items[0],
+          endTrigger: items[items.length - 1],
+          start: 'center center',
+          end: 'center center',
+          animation: dimmer,
+          scrub: 0.2,
+        });
+
+        // Create scrollbar color timeline
+        const scroller = gsap.timeline().fromTo(
+          document.documentElement,
+          {
+            '--hue': startHue,
           },
-          0
+          {
+            '--hue': endHue,
+            ease: 'none',
+          }
         );
 
-      // Create scroll trigger for opacity
-      dimmerScrub = ScrollTrigger.create({
-        trigger: items[0],
-        endTrigger: items[items.length - 1],
-        start: 'center center',
-        end: 'center center',
-        animation: dimmer,
-        scrub: 0.2,
-      });
+        // Create scroll trigger for scrollbar color
+        scrollerScrub = ScrollTrigger.create({
+          trigger: items[0],
+          endTrigger: items[items.length - 1],
+          start: 'center center',
+          end: 'center center',
+          animation: scroller,
+          scrub: 0.2,
+        });
 
-      // Create scrollbar color timeline
-      const scroller = gsap.timeline().fromTo(
-        document.documentElement,
-        {
-          '--hue': startHue,
-        },
-        {
-          '--hue': endHue,
-          ease: 'none',
-        }
-      );
-
-      // Create scroll trigger for scrollbar color
-      scrollerScrub = ScrollTrigger.create({
-        trigger: items[0],
-        endTrigger: items[items.length - 1],
-        start: 'center center',
-        end: 'center center',
-        animation: scroller,
-        scrub: 0.2,
-      });
-
-      // Create animation for chroma entry
-      chromaEntry = gsap.fromTo(
-        document.documentElement,
-        {
-          '--chroma': 0,
-        },
-        {
-          '--chroma': 0.3,
-          ease: 'none',
-          scrollTrigger: {
-            scrub: 0.2,
-            trigger: items[0],
-            start: 'center center+=40',
-            end: 'center center',
+        // Create animation for chroma entry
+        chromaEntry = gsap.fromTo(
+          document.documentElement,
+          {
+            '--chroma': 0,
           },
-        }
-      );
+          {
+            '--chroma': 0.3,
+            ease: 'none',
+            scrollTrigger: {
+              scrub: 0.2,
+              trigger: items[0],
+              start: 'center center+=40',
+              end: 'center center',
+            },
+          }
+        );
 
-      // Create animation for chroma exit
-      chromaExit = gsap.fromTo(
-        document.documentElement,
-        {
-          '--chroma': 0.3,
-        },
-        {
-          '--chroma': 0,
-          ease: 'none',
-          scrollTrigger: {
-            scrub: 0.2,
-            trigger: items[items.length - 2],
-            start: 'center center',
-            end: 'center center-=40',
+        // Create animation for chroma exit
+        chromaExit = gsap.fromTo(
+          document.documentElement,
+          {
+            '--chroma': 0.3,
           },
-        }
-      );
+          {
+            '--chroma': 0,
+            ease: 'none',
+            scrollTrigger: {
+              scrub: 0.2,
+              trigger: items[items.length - 2],
+              start: 'center center',
+              end: 'center center-=40',
+            },
+          }
+        );
 
-      // Disable animations if not enabled
-      if (!animate) {
-        if (chromaEntry?.scrollTrigger) chromaEntry.scrollTrigger.disable(true, false);
-        if (chromaExit?.scrollTrigger) chromaExit.scrollTrigger.disable(true, false);
-        if (dimmerScrub) dimmerScrub.disable(true, false);
-        if (scrollerScrub) scrollerScrub.disable(true, false);
-        gsap.set(items, { opacity: 1 });
-        gsap.set(document.documentElement, { '--chroma': 0 });
+        // Disable animations if not enabled
+        if (!animate) {
+          if (chromaEntry?.scrollTrigger) chromaEntry.scrollTrigger.disable(true, false);
+          if (chromaExit?.scrollTrigger) chromaExit.scrollTrigger.disable(true, false);
+          if (dimmerScrub) dimmerScrub.disable(true, false);
+          if (scrollerScrub) scrollerScrub.disable(true, false);
+          gsap.set(items, { opacity: 1 });
+          gsap.set(document.documentElement, { '--chroma': 0 });
+        }
       }
     }
 
@@ -192,13 +199,10 @@ export default function WordScroller({
   if (!mounted) return null;
 
   return (
-    <div className={`w-full ${className}`}>
-      <section className="content fluid">
+    <main className={`${styles.wordScroller} ${className}`}>
+      <section className={styles.fluid}>
         <h2>
           <span aria-hidden="true">{prefix}&nbsp;</span>
-          <span className="sr-only">
-            {prefix} {lastWordText}.
-          </span>
         </h2>
         <ul aria-hidden="true" style={{ '--count': normalizedWords.length } as React.CSSProperties}>
           {normalizedWords.map((word, index) => (
@@ -207,13 +211,13 @@ export default function WordScroller({
               ref={(el) => {
                 if (el) itemsRef.current[index] = el;
               }}
-              style={{ '--i': index } as React.CSSProperties}
-              className={index === normalizedWords.length - 1 ? 'last-word' : ''}
+              style={{ '--i': index, cursor: 'pointer' } as React.CSSProperties}
+              className={ `${index === normalizedWords.length - 1 ? styles.lastWord : ''} relative`}
               onClick={() => handleWordClick(index, word.link)}
             >
               {word.text}.
               {word.badge && (
-                <Badge variant="destructive" className="coming-soon-badge">
+                <Badge variant="destructive" className={styles.comingSoonBadge}>
                   {word.badge}
                 </Badge>
               )}
@@ -221,9 +225,9 @@ export default function WordScroller({
           ))}
         </ul>
       </section>
-      <section className="end-section">
-        <h2 className="text-5xl fluid">{endWord}</h2>
+      <section>
+        <h2 className={styles.fluid}>{endWord}</h2>
       </section>
-    </div>
+    </main>
   );
 }
