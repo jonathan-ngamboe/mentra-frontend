@@ -120,8 +120,8 @@
 }
 
 :root {
-  --badge-top-offset: 2rem;
-  --badge-right-offset: 4rem;
+  --badge-top-offset: 0;
+  --badge-right-offset: 2rem;
   --badge-font-size: 0.6rem;
 }
 
@@ -282,12 +282,14 @@ li:last-of-type {
   }
 
   [data-snap='true'] {
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity;
   }
 
   [data-snap='true'] li {
     scroll-snap-align: center;
-    scroll-snap-stop: always;
+    scroll-snap-stop: normal; 
+    padding-top: 1em; 
+    padding-bottom: 1em;
   }
 }
 

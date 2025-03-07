@@ -218,12 +218,13 @@ export default function WordScroller({
         let closestIndex = 0;
         let closestDistance = Infinity;
 
+        const centerOffset = isTouchDevice ? 0 : 0;
+
         items.forEach((item, index) => {
           const rect = item.getBoundingClientRect();
-          const centerOffset = isTouchDevice ? window.innerHeight * 0.15 : 0;
-          const distance = Math.abs(
-            rect.top + rect.height / 2 - (window.innerHeight / 2 + centerOffset)
-          );
+          const itemCenter = rect.top + rect.height / 2;
+          const targetPosition = window.innerHeight / 2 + centerOffset;
+          const distance = Math.abs(itemCenter - targetPosition);
 
           if (distance < closestDistance) {
             closestDistance = distance;
@@ -234,12 +235,56 @@ export default function WordScroller({
         setActiveIndex(closestIndex);
       };
 
-      window.addEventListener('scroll', handleScroll);
+      let isScrolling = false;
+      let scrollTimeout: ReturnType<typeof setTimeout>;
+
+      const handleLastItemVisibility = () => {
+        if (!mainRef.current) return;
+
+        const items = itemsRef.current.filter(Boolean);
+        if (items.length === 0) return;
+
+        if (activeIndex !== items.length - 1) return;
+
+        const lastItem = items[items.length - 1];
+        if (!lastItem) return;
+
+        const lastRect = lastItem.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const threshold = lastRect.height * 1.5; 
+
+        if (lastRect.bottom < viewportHeight / 2 - threshold) {
+          lastItem.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+        }
+      };
+
+      window.addEventListener('scroll', () => {
+        handleScroll();
+
+        clearTimeout(scrollTimeout);
+        isScrolling = true;
+
+        scrollTimeout = setTimeout(() => {
+          isScrolling = false;
+          handleLastItemVisibility();
+        }, 150);
+      });
 
       if (isTouchDevice) {
-        window.addEventListener('touchend', () => {
-          setTimeout(handleScroll, 100);
-        });
+        const handleTouchEnd = () => {
+          // Delay longer to let inertia finish
+          setTimeout(handleScroll, 250);
+        };
+
+        window.addEventListener('touchend', handleTouchEnd);
+
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+          window.removeEventListener('touchend', handleTouchEnd);
+        };
       }
 
       return () => {
