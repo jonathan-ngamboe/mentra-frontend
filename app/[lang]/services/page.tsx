@@ -20,7 +20,10 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
   return (
     <div className="container mx-auto self-center">
       <div className="flex flex-col mx-auto">
-        <header className="relative flex flex-col items-center justify-center h-[100svh] overflow-hidden snap-start" id="header-section">
+        <header
+          className="relative flex flex-col items-center justify-center h-[100svh] overflow-hidden snap-start"
+          id="header-section"
+        >
           <div className="absolute inset-0 bg-gradient-radial from-background/5 to-background/80 z-0"></div>
 
           <div className="relative z-10 max-w-4xl px-4 md:px-8 text-center">
@@ -40,10 +43,9 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
             </p>
           </div>
 
-          <a 
-            href="#word-scroller-section" 
-            className="absolute bottom-20 md:bottom-8 left-0 right-0 mx-auto w-10 h-10 flex items-center justify-center rounded-full transition-colors cursor-pointer"
-            aria-label="Scroll down"
+          <div
+            className="absolute bottom-20 md:bottom-8 left-0 right-0 mx-auto w-10 h-10 flex items-center justify-center rounded-full transition-colors"
+            aria-label={dict.services.action}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +61,7 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
             >
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
-          </a>
+          </div>
         </header>
 
         <div id="word-scroller-section" className="scroll-mt-4 snap-start">
