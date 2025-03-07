@@ -42,7 +42,7 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
 
           <a 
             href="#word-scroller-section" 
-            className="absolute bottom-8 left-0 right-0 mx-auto w-10 h-10 flex items-center justify-center rounded-full transition-colors cursor-pointer"
+            className="absolute bottom-20 md:bottom-8 left-0 right-0 mx-auto w-10 h-10 flex items-center justify-center rounded-full transition-colors cursor-pointer"
             aria-label="Scroll down"
           >
             <svg
@@ -60,9 +60,6 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
           </a>
-
-          <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-gradient-to-tr from-secondary/10 to-transparent rounded-tr-full blur-3xl"></div>
         </header>
 
         <div id="word-scroller-section" className="scroll-mt-4 snap-start">
