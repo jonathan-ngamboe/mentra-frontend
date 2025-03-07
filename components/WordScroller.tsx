@@ -16,7 +16,7 @@ export default function WordScroller({
   startHue = Math.floor(Math.random() * 100),
   endHue = Math.floor(Math.random() * 100) + 900,
   showScrollbar = true,
-  debug = false,
+  debug = true,
   className = '',
   endWord = '',
 }: WordScrollerProps) {
@@ -192,7 +192,7 @@ export default function WordScroller({
   if (!mounted) return null;
 
   return (
-    <div className={`word-scroller ${className}`}>
+    <div className={`w-full ${className}`}>
       <section className="content fluid">
         <h2>
           <span aria-hidden="true">{prefix}&nbsp;</span>

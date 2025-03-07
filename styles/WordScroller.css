@@ -117,7 +117,7 @@
     width: 100%;
     padding-left: 5rem;
   }
-  .word-scroller .end-section {
+  .end-section {
     min-height: 100vh;
     display: flex;
     place-items: center;
