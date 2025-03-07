@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTransitionNavigation } from '@/components/transitions';
+import { Badge } from '@/components/ui/badge';
 import { WordScrollerProps, WordItem } from '@/types/WordScroller';
 
 import '@/styles/WordScroller.css';
@@ -61,6 +62,13 @@ export default function WordScroller({
 
     // Register GSAP plugins
     gsap.registerPlugin(ScrollTrigger);
+
+    // Check if device is touch-enabled
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    if (isTouchDevice) {
+      document.documentElement.dataset.touchDevice = 'true';
+    }
 
     // Set up animations
     let items: HTMLLIElement[] = [];
@@ -207,13 +215,15 @@ export default function WordScroller({
         if (!mainRef.current) return;
 
         const items = itemsRef.current.filter(Boolean);
-
         let closestIndex = 0;
         let closestDistance = Infinity;
 
         items.forEach((item, index) => {
           const rect = item.getBoundingClientRect();
-          const distance = Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
+          const centerOffset = isTouchDevice ? window.innerHeight * 0.15 : 0;
+          const distance = Math.abs(
+            rect.top + rect.height / 2 - (window.innerHeight / 2 + centerOffset)
+          );
 
           if (distance < closestDistance) {
             closestDistance = distance;
@@ -226,8 +236,15 @@ export default function WordScroller({
 
       window.addEventListener('scroll', handleScroll);
 
+      if (isTouchDevice) {
+        window.addEventListener('touchend', () => {
+          setTimeout(handleScroll, 100);
+        });
+      }
+
       return () => {
         window.removeEventListener('scroll', handleScroll);
+        if (isTouchDevice) window.removeEventListener('touchend', handleScroll);
       };
     }
 
@@ -266,6 +283,11 @@ export default function WordScroller({
               onClick={() => handleWordClick(index, word.link)}
             >
               {word.text}.
+              {word.badge && (
+                <Badge variant="destructive" className="coming-soon-badge">
+                  {word.badge}
+                </Badge>
+              )}
             </li>
           ))}
         </ul>

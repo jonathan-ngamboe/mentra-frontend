@@ -1,6 +1,7 @@
 export interface WordItem {
   text: string;
   link: string;
+  badge?: string;
 }
 
 export interface WordScrollerProps {
