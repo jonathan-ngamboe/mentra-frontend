@@ -32,13 +32,9 @@ export default function WordScroller({
     typeof item === 'string' ? { text: item, link: '#' } : item
   );
 
-  // Get last word for accessibility
-  const lastWordText =
-    normalizedWords.length > 0 ? normalizedWords[normalizedWords.length - 1]?.text || '' : '';
-
   // Handle word click - either scroll to it or navigate to link
   const handleWordClick = (index: number, link: string) => {
-    if (link !== '') {
+    if (link !== '' && index === activeIndex) {
       // If a link is set, navigate to that link
       navigateWithTransition(link);
     } else {
