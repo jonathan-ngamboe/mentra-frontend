@@ -4,7 +4,8 @@
     "common": {
       "discover": "Découvrir",
       "contact": "Contact",
-      "loading": "Chargement..."
+      "loading": "Chargement...",
+      "clickToKnowMore": "Clique pour en savoir plus"
     },
     "badges": {
       "new": "Nouveau",

@@ -5,6 +5,7 @@ export interface Dictionary {
     discover: string;
     contact: string;
     loading: string;
+    clickToKnowMore: string;
   };
   badges: {
     new: string;
