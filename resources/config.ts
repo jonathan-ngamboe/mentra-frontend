@@ -1,5 +1,6 @@
 import { HeartIcon, HomeIcon } from 'lucide-react';
 import { Icons } from '@/components/Icons';
+import { color } from 'framer-motion';
 
 const baseURL = 'mentra.ch';
 const siteName = 'Mentra';
@@ -61,16 +62,20 @@ const services = [
   {
     labelKey: 'services.careerMatching.action',
     link: '/services/career-matching',
+    icon: '💼',
+    color: '#00C9A7',
   },
   {
     labelKey: 'services.events.action',
-    link: '',
+    icon: '🚀',
+    color: '#FFB800',
     badge: 'badges.comingSoon',
   },
   // Always keep doIt as the last item
   {
     labelKey: 'services.doIt.action',
-    link: '',
+    icon: '💡',
+    color: '#FF3D71',
   },
 ];
 
