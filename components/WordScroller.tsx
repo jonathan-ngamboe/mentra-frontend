@@ -10,12 +10,12 @@ import '@/styles/WordScroller.css';
 export default function WordScroller({
   prefix = 'you can',
   words = [],
-  animate = true,
-  snap = true,
+  animate = false,
+  snap = false,
   startHue = Math.floor(Math.random() * 100),
   endHue = Math.floor(Math.random() * 100) + 900,
-  showScrollbar = true,
-  debug = false,
+  showScrollbar = false,
+  debug = true,
   className = '',
   endWord = '',
 }: WordScrollerProps) {
