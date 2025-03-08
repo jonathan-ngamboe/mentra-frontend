@@ -66,14 +66,8 @@ export default function WordScroller({
     };
   }, []);
 
+  // Debug
   useEffect(() => {
-    setMounted(true);
-    if (typeof window === 'undefined') return;
-
-    // Register GSAP plugins
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Set up config
     document.documentElement.dataset.syncScrollbar = showScrollbar.toString();
     document.documentElement.dataset.animate = animate.toString();
     document.documentElement.dataset.snap = snap.toString();
@@ -82,6 +76,25 @@ export default function WordScroller({
     document.documentElement.style.setProperty('--hue', startHue.toString());
     document.documentElement.style.setProperty('--end', endHue.toString());
 
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window === 'undefined') return;
+
+    // Register GSAP plugins
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Set up config
+    //document.documentElement.dataset.syncScrollbar = showScrollbar.toString();
+    //document.documentElement.dataset.animate = animate.toString();
+    //document.documentElement.dataset.snap = snap.toString();
+    //document.documentElement.dataset.debug = debug.toString();
+    //document.documentElement.style.setProperty('--start', startHue.toString());
+    //document.documentElement.style.setProperty('--hue', startHue.toString());
+    //document.documentElement.style.setProperty('--end', endHue.toString());
+
     // Variables for GSAP
     let items: HTMLElement[] = [];
     let scrollerScrub: ScrollTrigger | null = null;
@@ -89,8 +102,41 @@ export default function WordScroller({
     let chromaEntry: gsap.core.Tween | null = null;
     let chromaExit: gsap.core.Tween | null = null;
 
+    // Debug
+    let touchScrolling = false;
+
+    document.addEventListener(
+      'touchstart',
+      () => {
+        touchScrolling = true;
+        if (dimmerScrub) dimmerScrub.disable();
+        if (scrollerScrub) scrollerScrub.disable();
+      },
+      { passive: true }
+    );
+
+    document.addEventListener(
+      'touchend',
+      () => {
+        touchScrolling = false;
+        setTimeout(() => {
+          if (animate) {
+            if (dimmerScrub) dimmerScrub.enable();
+            if (scrollerScrub) scrollerScrub.enable();
+          }
+        }, 300);
+      },
+      { passive: true }
+    );
+    // End debug
+
     // Use GSAP if CSS scroll animations not supported
     if (!CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
+      ScrollTrigger.config({
+        ignoreMobileResize: true,
+        autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+      });
+
       const wordScrollerElement = document.querySelector(`.${styles.wordScroller}`);
       if (wordScrollerElement) {
         items = gsap.utils.toArray<HTMLElement>(`.${styles.wordScroller} ul li`);
