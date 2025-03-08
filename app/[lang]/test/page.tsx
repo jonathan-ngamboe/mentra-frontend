@@ -11,13 +11,15 @@ export default function Test() {
   ];
 
   return (
-    <>
-      <header className='min-h-[100vh] flex w-full place-items-center px-5rem'>
+    <div className="grid place-items-center">
+      <header className="min-h-[100vh] flex w-full place-items-center px-5rem">
         <h1 className="fluid">
-          you can<br />scroll.
+          you can
+          <br />
+          scroll.
         </h1>
       </header>
       <WordScroller words={words} endWord="End" />
-    </>
+    </div>
   );
 }
