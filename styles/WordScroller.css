@@ -73,6 +73,16 @@
 }
 
 /* Styles for list items */
+.word-scroller li {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.word-scroller li:hover {
+  transform: translateX(5px);
+}
+
 .word-scroller li:not(:last-of-type) {
   color: oklch(var(--lightness) var(--base-chroma) calc(var(--start) + (var(--step) * var(--i))));
 }
@@ -88,10 +98,39 @@
 /* Badge */
 .coming-soon-badge {
   position: absolute;
-  top: -1rem;
+  top: -0.4rem;
   right: -1rem;
   font-size: 0.6rem;
   padding: 0.2rem 0.4rem;
+  white-space: nowrap;
+  transform: rotate(5deg) scale(0.85);
+  z-index: 10;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .coming-soon-badge {
+    right: 0; 
+    top: 0;
+    transform: rotate(5deg) scale(0.75);
+    font-size: 0.5rem; 
+  }
+
+  .word-scroller section:first-of-type {
+    padding-left: 2rem; 
+  }
+}
+
+@media (max-width: 480px) {
+  .coming-soon-badge {
+    right: 0; 
+    top: 0; 
+    transform: rotate(5deg) scale(0.7); 
+  }
+
+  .word-scroller section:first-of-type {
+    padding-left: 1rem;
+  }
 }
 
 /* Fluid styles for text */
