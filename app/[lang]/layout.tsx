@@ -90,7 +90,7 @@ export default async function RootLayout({
     <ViewTransitions>
       <html
         lang={lang}
-        className={cn(primary.variable, code.variable, 'antialiased')}
+        className={cn(primary.variable, code.variable, 'scroll-smooth', 'antialiased')}
         suppressHydrationWarning
       >
         <body className="relative flex flex-col min-h-screen bg-background font-sans transition-colors duration-300 overflow-x-hidden scrollbar-hide">
