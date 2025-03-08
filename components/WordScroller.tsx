@@ -32,13 +32,25 @@ export default function WordScroller({
     typeof item === 'string' ? { text: item, link: '#' } : item
   );
 
-  // Handle word click - only for navigation, no forced scrolling
+  // Handle word click - either scroll to it or navigate to link
   const handleWordClick = (index: number, link: string) => {
     if (link !== '' && index === activeIndex) {
+      // If a link is set, navigate to that link
       navigateWithTransition(link);
     } else {
+      // Otherwise, update active index without forcing scroll
       setActiveIndex(index);
-      // Supprimez complètement scrollIntoView
+      // smooth scroll without disrupting snap scroll
+      const element = itemsRef.current[index];
+      if (element) {
+        // Use requestAnimationFrame to avoid conflicts
+        requestAnimationFrame(() => {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+        });
+      }
     }
   };
 
@@ -68,14 +80,9 @@ export default function WordScroller({
 
     // Use GSAP if CSS scroll animations not supported
     if (!CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
-      // Important: Sélectionnez les éléments après qu'ils soient rendus
-      setTimeout(() => {
+      const wordScrollerElement = document.querySelector(`.${styles.wordScroller}`);
+      if (wordScrollerElement) {
         items = gsap.utils.toArray<HTMLElement>(`.${styles.wordScroller} ul li`);
-
-        if (items.length === 0) {
-          console.error('No items found for GSAP animations');
-          return;
-        }
 
         // Set initial opacity
         gsap.set(items, { opacity: (i: number) => (i !== 0 ? 0.2 : 1) });
@@ -173,7 +180,7 @@ export default function WordScroller({
           gsap.set(items, { opacity: 1 });
           gsap.set(document.documentElement, { '--chroma': 0 });
         }
-      }, 100);
+      }
     }
 
     // Cleanup function
@@ -201,7 +208,7 @@ export default function WordScroller({
                 if (el) itemsRef.current[index] = el;
               }}
               style={{ '--i': index, cursor: 'pointer' } as React.CSSProperties}
-              className={`${index === normalizedWords.length - 1 ? styles.lastWord : ''} relative`}
+              className={ `${index === normalizedWords.length - 1 ? styles.lastWord : ''} relative`}
               onClick={() => handleWordClick(index, word.link)}
             >
               {word.text}.
