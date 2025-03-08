@@ -1,124 +1,218 @@
+/* Custom properties configuration */
+@property --hue {
+  initial-value: 0;
+  syntax: '<number>';
+  inherits: false;
+}
+
+@property --chroma {
+  initial-value: 0;
+  syntax: '<number>';
+  inherits: true;
+}
+
+/* Global variables */
+:root {
+  --start: 0;
+  --end: 360;
+  --lightness: 65%;
+  --base-chroma: 0.3;
+  --font-size-min: 14;
+  --font-size-max: 20;
+  --font-ratio-min: 1.1;
+  --font-ratio-max: 1.33;
+  --font-width-min: 375;
+  --font-width-max: 1500;
+}
+
+/* Styles for WordScroller component */
 .word-scroller {
-    width: 100%;
-    position: relative;
-    overflow: visible;
+  width: 100%;
+}
+
+/* First section with scrolling text */
+.word-scroller section:first-of-type {
+  --font-level: 6;
+  display: flex;
+  line-height: 1.25;
+  width: 100%;
+  padding-left: 5rem;
+}
+
+/* Last section */
+.word-scroller section:last-of-type {
+  min-height: 100vh;
+  display: flex;
+  place-items: center;
+  width: 100%;
+  justify-content: center;
+}
+
+.word-scroller section:last-of-type h2 {
+  --font-level: 6;
+}
+
+/* Sticky title */
+.word-scroller section:first-of-type h2 {
+  position: sticky;
+  top: calc(50% - 0.5lh);
+  font-size: inherit;
+  margin: 0;
+  display: inline-block;
+  height: fit-content;
+  font-weight: 600;
+}
+
+/* Word list */
+.word-scroller ul {
+  font-weight: 600;
+  padding-inline: 0;
+  margin: 0;
+  list-style-type: none;
+  --step: calc((var(--end) - var(--start)) / (var(--count) - 1));
+}
+
+/* Styles for list items */
+.word-scroller li:not(:last-of-type) {
+  color: oklch(var(--lightness) var(--base-chroma) calc(var(--start) + (var(--step) * var(--i))));
+}
+
+/* Styles for title and last word */
+.word-scroller h2,
+.word-scroller li.last-word {
+  background: linear-gradient(canvasText 50%, color-mix(in oklch, canvas, canvasText 25%));
+  background-clip: text;
+  color: transparent;
+}
+
+/* Badge */
+.coming-soon-badge {
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  font-size: 0.6rem;
+  padding: 0.2rem 0.4rem;
+}
+
+/* Fluid styles for text */
+.fluid {
+  --fluid-min: calc(var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0)));
+  --fluid-max: calc(var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0)));
+  --fluid-preferred: calc(
+    (var(--fluid-max) - var(--fluid-min)) / (var(--font-width-max) - var(--font-width-min))
+  );
+  --fluid-type: clamp(
+    (var(--fluid-min) / 16) * 1rem,
+    ((var(--fluid-min) / 16) * 1rem) -
+      (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
+      (var(--fluid-preferred) * var(--variable-unit, 100vi)),
+    (var(--fluid-max) / 16) * 1rem
+  );
+  font-size: var(--fluid-type);
+}
+
+/* Styles for snap scroll */
+[data-snap='true'] {
+  scroll-snap-type: y proximity;
+}
+
+[data-snap='true'] li {
+  scroll-snap-align: center;
+}
+
+/* Styles for debug mode */
+[data-debug='true'] li {
+  outline: 0.05em dashed currentColor;
+}
+
+[data-debug='true'] :is(h2, li:last-of-type) {
+  outline: 0.05em dashed canvasText;
+}
+
+/* Styles for scrollbar color */
+[data-sync-scrollbar='true'] {
+  scrollbar-color: oklch(var(--lightness) var(--chroma) var(--hue)) transparent;
+}
+
+/* Support for scroll-based CSS animations */
+@supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
+  [data-sync-scrollbar='true'][data-animate='true'] {
+    timeline-scope: --list;
+    scrollbar-color: oklch(var(--lightness) var(--chroma, 0) var(--hue)) transparent;
+    animation-name: change, chroma-on, chroma-off;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-range:
+      entry 50% exit 50%,
+      entry 40% entry 50%,
+      exit 30% exit 40%;
+    animation-timeline: --list;
   }
-  
-  .word-scroller section:first-of-type {
-    --font-level: 6;
-    display: flex;
-    line-height: 1.25;
-    width: 100%;
-    padding-left: 5rem;
-    min-height: 100vh; 
-    position: relative;
-  }
-  
-  .word-scroller section:last-of-type {
-    min-height: 100vh;
-    display: flex;
-    place-items: center;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .word-scroller h2 {
-    position: sticky;
-    top: calc(50vh - 0.5em);
-    font-size: inherit;
-    margin: 0;
-    display: inline-block;
-    height: fit-content;
-    font-weight: 600;
-    background: linear-gradient(
-      canvasText 50%,
-      color-mix(in oklch, canvas, canvasText 25%)
-    );
-    background-clip: text;
-    color: transparent;
-  }
-  
+
   .word-scroller ul {
-    font-weight: 600;
-    padding-inline: 0;
-    margin: 0;
-    list-style-type: none;
-    --step: calc((var(--end) - var(--start)) / (var(--count) - 1));
+    view-timeline: --list;
   }
-  
-  .word-scroller li {
-    padding: 1rem 0;
-    margin: 1rem 0;
-    min-height: 3rem;
+
+  [data-animate='true'] li {
+    opacity: 0.2;
+    animation-name: brighten;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-range: cover calc(50% - 1lh) calc(50% + 1lh);
+    animation-timeline: view();
   }
-  
-  .word-scroller li:not(:last-of-type) {
-    color: oklch(
-      var(--lightness, 65%) var(--base-chroma, 0.3)
-        calc(var(--start, 0) + (var(--step) * var(--i, 0)))
-    );
+
+  [data-animate='true'] li:first-of-type {
+    --start-opacity: 1;
   }
-  
-  .word-scroller li.last-word {
-    background: linear-gradient(
-      canvasText 50%,
-      color-mix(in oklch, canvas, canvasText 25%)
-    );
-    background-clip: text;
-    color: transparent;
+
+  [data-animate='true'] li:last-of-type {
+    --brightness: 1;
+    --end-opacity: 1;
   }
-  
-  .coming-soon-badge {
-    position: absolute;
-    top: -1rem;
-    right: -1rem;
-    font-size: 0.6rem;
-    padding: 0.2rem 0.4rem;
+}
+
+/* Keyframes for animations */
+@keyframes change {
+  to {
+    --hue: var(--end);
   }
-  
-  .fluid {
-    --font-size-min: 14;
-    --font-size-max: 20;
-    --font-ratio-min: 1.1;
-    --font-ratio-max: 1.33;
-    --font-width-min: 375;
-    --font-width-max: 1500;
-    --fluid-min: calc(
-      var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0))
-    );
-    --fluid-max: calc(
-      var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0))
-    );
-    --fluid-preferred: calc(
-      (var(--fluid-max) - var(--fluid-min)) /
-        (var(--font-width-max) - var(--font-width-min))
-    );
-    --fluid-type: clamp(
-      (var(--fluid-min) / 16) * 1rem,
-      ((var(--fluid-min) / 16) * 1rem) -
-        (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
-        (var(--fluid-preferred) * 100vw),
-      (var(--fluid-max) / 16) * 1rem
-    );
-    font-size: var(--fluid-type);
+}
+
+@keyframes chroma-on {
+  to {
+    --chroma: 0.3;
   }
-  
-  [data-debug='true'] li {
-    outline: 0.05em dashed currentColor;
+}
+
+@keyframes chroma-off {
+  to {
+    --chroma: 0;
   }
-  
-  [data-debug='true'] h2 {
-    outline: 0.05em dashed canvasText;
+}
+
+@keyframes brighten {
+  0% {
+    opacity: var(--start-opacity, 0.2);
   }
-  
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+  50% {
+    opacity: 1;
+    filter: brightness(var(--brightness, 1.2));
   }
+  100% {
+    opacity: var(--end-opacity, 0.2);
+  }
+}
+
+/* Utility for screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
