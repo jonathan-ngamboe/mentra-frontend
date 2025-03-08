@@ -1,31 +1,58 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Badge } from '@/components/ui/badge';
 import { WordScrollerProps, WordItem } from '@/types/WordScroller';
+import { useTransitionNavigation } from '@/components/transitions/useTransitionNavigation';
 import '@/styles/WordScroller.css';
 
 export default function WordScroller({
   prefix = 'you can',
   words = [],
-  animate = false,
-  snap = false,
+  animate = true,
+  snap = true,
   startHue = Math.floor(Math.random() * 100),
   endHue = Math.floor(Math.random() * 100) + 900,
-  showScrollbar = false,
-  debug = true,
+  showScrollbar = true,
+  debug = false,
   className = '',
   endWord = '',
 }: WordScrollerProps) {
   const [mounted, setMounted] = useState(false);
+  const listItemsRef = useRef<Array<HTMLLIElement | null>>([]);
+  const { navigateWithTransition } = useTransitionNavigation();
 
   // Normalize words
   const wordsArray = Array.isArray(words) ? words : [];
   const normalizedWords: WordItem[] = wordsArray.map((item) =>
     typeof item === 'string' ? { text: item, link: '#' } : item
   );
+
+  // Handle click on a word
+  const handleWordClick = (index: number, link: string) => {
+    // First scroll to the word
+    const element = listItemsRef.current[index];
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // After scrolling, navigate to the link with a delay
+      setTimeout(() => {
+        if (link && link !== '#') {
+          navigateWithTransition(link);
+        }
+      }, 800); // Delay navigation to allow scrolling animation to complete
+    }
+  };
+
+  // Ensure listItemsRef has enough slots for all words
+  useEffect(() => {
+    listItemsRef.current = listItemsRef.current.slice(0, normalizedWords.length);
+    while (listItemsRef.current.length < normalizedWords.length) {
+      listItemsRef.current.push(null);
+    }
+  }, [normalizedWords.length]);
 
   useEffect(() => {
     setMounted(true);
@@ -221,8 +248,13 @@ export default function WordScroller({
           {normalizedWords.map((word, index) => (
             <li
               key={index}
+              ref={(el) => {
+                listItemsRef.current[index] = el;
+              }}
               style={{ '--i': index } as React.CSSProperties}
               className={index === normalizedWords.length - 1 ? 'last-word' : ''}
+              onClick={() => handleWordClick(index, word.link || '#')}
+              title={word.link && word.link !== '#' ? `Go to ${word.text}` : undefined}
             >
               {word.text}.
               {word.badge && (
