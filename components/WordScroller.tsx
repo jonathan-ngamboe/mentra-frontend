@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef, act } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Badge } from '@/components/ui/badge';
