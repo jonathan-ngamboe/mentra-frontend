@@ -210,7 +210,7 @@ export default function WordScroller({
   if (!mounted) return null;
 
   return (
-    <div className={`word-scroller ${className}`}>
+    <div className={`pt-16 word-scroller ${className}`}>
       <section className="content fluid">
         <h2>
           <span aria-hidden="true">{prefix}&nbsp;</span>
@@ -226,7 +226,7 @@ export default function WordScroller({
                 listItemsRef.current[index] = el;
               }}
               style={{ '--i': index } as React.CSSProperties}
-              className={`{index === normalizedWords.length - 1 ? 'last-word' : ''} md:py-0 py-8`}
+              className={index === normalizedWords.length - 1 ? 'last-word' : ''}
               onClick={() => handleWordClick(index, word.link || '#')}
               title={word.link && word.link !== '#' ? `Go to ${word.text}` : undefined}
             >
