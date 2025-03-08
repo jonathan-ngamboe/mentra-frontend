@@ -151,7 +151,7 @@ export default function WordScroller({
           scrollTrigger: {
             scrub: 0.2,
             trigger: items[0],
-            start: 'center center+=80',
+            start: 'center center+=40',
             end: 'center center',
           },
         }
@@ -170,7 +170,7 @@ export default function WordScroller({
             scrub: 0.2,
             trigger: items[items.length - 2],
             start: 'center center',
-            end: 'center center-=80',
+            end: 'center center-=40',
           },
         }
       );
@@ -226,7 +226,7 @@ export default function WordScroller({
                 listItemsRef.current[index] = el;
               }}
               style={{ '--i': index } as React.CSSProperties}
-              className={index === normalizedWords.length - 1 ? 'last-word' : ''}
+              className={`{index === normalizedWords.length - 1 ? 'last-word' : ''} md:py-0 py-8`}
               onClick={() => handleWordClick(index, word.link || '#')}
               title={word.link && word.link !== '#' ? `Go to ${word.text}` : undefined}
             >
