@@ -4,7 +4,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Badge } from '@/components/ui/badge';
-import { WordScrollerProps, WordItem } from '@/types/WordScroller';
+import { WordScrollerProps } from '@/types/WordScroller';
+import { ServiceItem } from '@/types/service';
 import { useTransitionNavigation } from '@/components/transitions/useTransitionNavigation';
 import '@/styles/WordScroller.css';
 
@@ -30,7 +31,7 @@ export default function WordScroller({
 
   // Normalize words
   const wordsArray = Array.isArray(words) ? words : [];
-  const normalizedWords: WordItem[] = wordsArray.map((item) =>
+  const normalizedWords: ServiceItem[] = wordsArray.map((item) =>
     typeof item === 'string' ? { text: item, link: '#' } : item
   );
 
@@ -215,7 +216,7 @@ export default function WordScroller({
   return (
     <div className={`word-scroller ${className}`}>
       <header className="min-h-screen flex w-full place-items-center relative justify-center">
-        <div className="relative max-w-4xl px-4 md:px-8 text-center">
+        <div className="max-w-4xl px-4 md:px-8 text-center">
           <h1 className="block text-sm md:text-base uppercase tracking-widest text-foreground/60 mb-4 font-medium">
             {title}
           </h1>

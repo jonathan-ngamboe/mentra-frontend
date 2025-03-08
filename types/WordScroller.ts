@@ -1,8 +1,4 @@
-export interface WordItem {
-  text: string;
-  link: string;
-  badge?: string;
-}
+import { ServiceItem } from '@/types/service';
 
 export interface WordScrollerProps {
   /**
@@ -13,7 +9,7 @@ export interface WordScrollerProps {
   /**
    * Array of words to scroll through
    */
-  words: WordItem[] | string[];
+  words: ServiceItem[] | string[];
 
   /**
    * Color theme ('dark', 'light', or 'system')
