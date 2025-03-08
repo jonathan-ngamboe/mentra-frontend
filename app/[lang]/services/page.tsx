@@ -19,7 +19,7 @@ export default async function Services({ params }: { params: Promise<{ lang: Sup
 
   return (
     <div className="grid place-items-center">
-      <header className="h-[100svh] flex w-full place-items-center relative justify-center">
+      <header className="min-h-screen flex w-full place-items-center relative justify-center">
         <div className="relative max-w-4xl px-4 md:px-8 text-center">
           <h1 className="block text-sm md:text-base uppercase tracking-widest text-foreground/60 mb-4 font-medium">
             {dict.services.title}
