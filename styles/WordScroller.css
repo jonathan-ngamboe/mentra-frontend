@@ -1,98 +1,97 @@
 @property --hue {
-    initial-value: 0;
-    syntax: '<number>';
-    inherits: false;
+  initial-value: 0;
+  syntax: '<number>';
+  inherits: false;
+}
+
+@property --chroma {
+  initial-value: 0;
+  syntax: '<number>';
+  inherits: true;
+}
+
+[data-debug='true'] li {
+  outline: 0.05em dashed currentColor;
+}
+
+[data-debug='true'] :is(h2, li:last-of-type) {
+  outline: 0.05em dashed canvasText;
+}
+
+[data-sync-scrollbar='true'] {
+  scrollbar-color: oklch(var(--lightness) var(--chroma) var(--hue)) #0000;
+}
+
+@supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
+  [data-sync-scrollbar='true'][data-animate='true'] {
+    timeline-scope: --list;
+    scrollbar-color: oklch(var(--lightness) var(--chroma, 0) var(--hue)) #0000;
+    animation-name: change, chroma-on, chroma-off;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-range:
+      entry 50% exit 50%,
+      entry 40% entry 50%,
+      exit 30% exit 40%;
+    animation-timeline: --list;
   }
-  
-  @property --chroma {
-    initial-value: 0;
-    syntax: '<number>';
-    inherits: true;
+
+  [data-animate='true'] li {
+    opacity: 0.2;
+    animation-name: brighten;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-range: cover calc(50% - 1lh) calc(50% + 1lh);
+    animation-timeline: view();
   }
-  
-  [data-debug='true'] li {
-    outline: 0.05em dashed currentColor;
+
+  html[data-animate='true'] .wordScroller li:first-of-type {
+    --start-opacity: 1;
   }
-  
-  [data-debug='true'] :is(h2, li:last-of-type) {
-    outline: 0.05em dashed canvasText;
+
+  html[data-animate='true'] .wordScroller li:last-of-type {
+    --brightness: 1;
+    --end-opacity: 1;
   }
-  
-  [data-sync-scrollbar='true'] {
-    scrollbar-color: oklch(var(--lightness) var(--chroma) var(--hue)) #0000;
+}
+
+/* Snap scroll */
+[data-snap='true'] {
+  scroll-snap-type: y proximity;
+}
+
+[data-snap='true'] li {
+  scroll-snap-align: center;
+}
+
+/* Keyframes */
+@keyframes change {
+  to {
+    --hue: var(--end);
   }
-  
-  @supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
-    [data-sync-scrollbar='true'][data-animate='true'] {
-      timeline-scope: --list;
-      scrollbar-color: oklch(var(--lightness) var(--chroma, 0) var(--hue)) #0000;
-      animation-name: change, chroma-on, chroma-off;
-      animation-fill-mode: both;
-      animation-timing-function: linear;
-      animation-range:
-        entry 50% exit 50%,
-        entry 40% entry 50%,
-        exit 30% exit 40%;
-      animation-timeline: --list;
-    }
-  
-    [data-animate='true'] li {
-      opacity: 0.2;
-      animation-name: brighten;
-      animation-fill-mode: both;
-      animation-timing-function: linear;
-      animation-range: cover calc(50% - 1lh) calc(50% + 1lh);
-      animation-timeline: view();
-    }
-  
-    [data-animate='true'] li:first-of-type {
-      --start-opacity: 1;
-    }
-  
-    [data-animate='true'] li:last-of-type {
-      --brightness: 1;
-      --end-opacity: 1;
-    }
+}
+
+@keyframes chroma-on {
+  to {
+    --chroma: 0.3;
   }
-  
-  /* Snap scroll */
-  [data-snap='true'] {
-    scroll-snap-type: y proximity;
+}
+
+@keyframes chroma-off {
+  to {
+    --chroma: 0;
   }
-  
-  [data-snap='true'] li {
-    scroll-snap-align: center;
+}
+
+@keyframes brighten {
+  0% {
+    opacity: var(--start-opacity, 0.2);
   }
-  
-  /* Keyframes */
-  @keyframes change {
-    to {
-      --hue: var(--end);
-    }
+  50% {
+    opacity: 1;
+    filter: brightness(var(--brightness, 1.2));
   }
-  
-  @keyframes chroma-on {
-    to {
-      --chroma: 0.3;
-    }
+  100% {
+    opacity: var(--end-opacity, 0.2);
   }
-  
-  @keyframes chroma-off {
-    to {
-      --chroma: 0;
-    }
-  }
-  
-  @keyframes brighten {
-    0% {
-      opacity: var(--start-opacity, 0.2);
-    }
-    50% {
-      opacity: 1;
-      filter: brightness(var(--brightness, 1.2));
-    }
-    100% {
-      opacity: var(--end-opacity, 0.2);
-    }
-  }
-  
+}

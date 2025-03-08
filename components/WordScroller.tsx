@@ -13,7 +13,7 @@ export default function WordScroller({
   prefix = 'you can',
   words = [],
   animate = true,
-  snap = false,
+  snap = true,
   startHue = Math.floor(Math.random() * 100),
   endHue = Math.floor(Math.random() * 100) + 900,
   showScrollbar = true,
@@ -35,24 +35,36 @@ export default function WordScroller({
   // Handle word click - either scroll to it or navigate to link
   const handleWordClick = (index: number, link: string) => {
     if (link !== '' && index === activeIndex) {
-      // If a link is set, navigate to that link
       navigateWithTransition(link);
     } else {
-      // Otherwise, update active index without forcing scroll
       setActiveIndex(index);
-      // smooth scroll without disrupting snap scroll
-      const element = itemsRef.current[index];
-      if (element) {
-        // Use requestAnimationFrame to avoid conflicts
-        requestAnimationFrame(() => {
-          element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-          });
-        });
-      }
     }
   };
+
+  // Debug
+  useEffect(() => {
+    const debugElement = document.createElement('div');
+    debugElement.style.position = 'fixed';
+    debugElement.style.top = '0';
+    debugElement.style.left = '0';
+    debugElement.style.background = 'rgba(0,0,0,0.7)';
+    debugElement.style.color = 'white';
+    debugElement.style.padding = '10px';
+    debugElement.style.zIndex = '9999';
+
+    const html = document.documentElement;
+    debugElement.innerHTML = `
+      data-snap: ${html.dataset.snap}<br>
+      data-animate: ${html.dataset.animate}<br>
+      CSS.supports: ${CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')}<br>
+    `;
+
+    document.body.appendChild(debugElement);
+
+    return () => {
+      document.body.removeChild(debugElement);
+    };
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -62,13 +74,13 @@ export default function WordScroller({
     gsap.registerPlugin(ScrollTrigger);
 
     // Set up config
-    const root = document.documentElement;
-    root.dataset.syncScrollbar = showScrollbar.toString();
-    root.dataset.animate = animate.toString();
-    root.dataset.debug = debug.toString();
-    root.style.setProperty('--start', startHue.toString());
-    root.style.setProperty('--hue', startHue.toString());
-    root.style.setProperty('--end', endHue.toString());
+    document.documentElement.dataset.syncScrollbar = showScrollbar.toString();
+    document.documentElement.dataset.animate = animate.toString();
+    document.documentElement.dataset.snap = snap.toString();
+    document.documentElement.dataset.debug = debug.toString();
+    document.documentElement.style.setProperty('--start', startHue.toString());
+    document.documentElement.style.setProperty('--hue', startHue.toString());
+    document.documentElement.style.setProperty('--end', endHue.toString());
 
     // Variables for GSAP
     let items: HTMLElement[] = [];
@@ -76,12 +88,6 @@ export default function WordScroller({
     let dimmerScrub: ScrollTrigger | null = null;
     let chromaEntry: gsap.core.Tween | null = null;
     let chromaExit: gsap.core.Tween | null = null;
-
-    const container = document.querySelector(`.${styles.wordScroller}`) as HTMLElement; 
-    if (container) {
-      container.classList.add('wordScrollerContainer');
-      container.dataset.snap = snap.toString();
-    }
 
     // Use GSAP if CSS scroll animations not supported
     if (!CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {

@@ -107,7 +107,7 @@
 
 /* Supports tag for view timelines */
 @supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
-  .wordScroller ul {
+  html[data-animate="true"] .wordScroller ul {
     view-timeline: --list;
   }
 }
