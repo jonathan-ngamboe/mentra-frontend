@@ -32,53 +32,15 @@ export default function WordScroller({
     typeof item === 'string' ? { text: item, link: '#' } : item
   );
 
-  // Handle word click - either scroll to it or navigate to link
+  // Handle word click - only for navigation, no forced scrolling
   const handleWordClick = (index: number, link: string) => {
     if (link !== '' && index === activeIndex) {
       navigateWithTransition(link);
     } else {
       setActiveIndex(index);
+      // Supprimez complètement scrollIntoView
     }
   };
-
-  // Debug
-  useEffect(() => {
-    const debugElement = document.createElement('div');
-    debugElement.style.position = 'fixed';
-    debugElement.style.top = '0';
-    debugElement.style.left = '0';
-    debugElement.style.background = 'rgba(0,0,0,0.7)';
-    debugElement.style.color = 'white';
-    debugElement.style.padding = '10px';
-    debugElement.style.zIndex = '9999';
-
-    const html = document.documentElement;
-    debugElement.innerHTML = `
-      data-snap: ${html.dataset.snap}<br>
-      data-animate: ${html.dataset.animate}<br>
-      CSS.supports: ${CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')}<br>
-    `;
-
-    document.body.appendChild(debugElement);
-
-    return () => {
-      document.body.removeChild(debugElement);
-    };
-  }, []);
-
-  // Debug
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    document.documentElement.dataset.syncScrollbar = showScrollbar.toString();
-    document.documentElement.dataset.animate = animate.toString();
-    document.documentElement.dataset.snap = snap.toString();
-    document.documentElement.dataset.debug = debug.toString();
-    document.documentElement.style.setProperty('--start', startHue.toString());
-    document.documentElement.style.setProperty('--hue', startHue.toString());
-    document.documentElement.style.setProperty('--end', endHue.toString());
-
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -88,13 +50,14 @@ export default function WordScroller({
     gsap.registerPlugin(ScrollTrigger);
 
     // Set up config
-    //document.documentElement.dataset.syncScrollbar = showScrollbar.toString();
-    //document.documentElement.dataset.animate = animate.toString();
-    //document.documentElement.dataset.snap = snap.toString();
-    //document.documentElement.dataset.debug = debug.toString();
-    //document.documentElement.style.setProperty('--start', startHue.toString());
-    //document.documentElement.style.setProperty('--hue', startHue.toString());
-    //document.documentElement.style.setProperty('--end', endHue.toString());
+    const root = document.documentElement;
+    root.dataset.syncScrollbar = showScrollbar.toString();
+    root.dataset.animate = animate.toString();
+    root.dataset.snap = snap.toString();
+    root.dataset.debug = debug.toString();
+    root.style.setProperty('--start', startHue.toString());
+    root.style.setProperty('--hue', startHue.toString());
+    root.style.setProperty('--end', endHue.toString());
 
     // Variables for GSAP
     let items: HTMLElement[] = [];
@@ -103,41 +66,16 @@ export default function WordScroller({
     let chromaEntry: gsap.core.Tween | null = null;
     let chromaExit: gsap.core.Tween | null = null;
 
-    // Debug
-
-    document.addEventListener(
-      'touchstart',
-      () => {
-        if (dimmerScrub) dimmerScrub.disable();
-        if (scrollerScrub) scrollerScrub.disable();
-      },
-      { passive: true }
-    );
-
-    document.addEventListener(
-      'touchend',
-      () => {
-        setTimeout(() => {
-          if (animate) {
-            if (dimmerScrub) dimmerScrub.enable();
-            if (scrollerScrub) scrollerScrub.enable();
-          }
-        }, 300);
-      },
-      { passive: true }
-    );
-    // End debug
-
     // Use GSAP if CSS scroll animations not supported
     if (!CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
-      ScrollTrigger.config({
-        ignoreMobileResize: true,
-        autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
-      });
-
-      const wordScrollerElement = document.querySelector(`.${styles.wordScroller}`);
-      if (wordScrollerElement) {
+      // Important: Sélectionnez les éléments après qu'ils soient rendus
+      setTimeout(() => {
         items = gsap.utils.toArray<HTMLElement>(`.${styles.wordScroller} ul li`);
+
+        if (items.length === 0) {
+          console.error('No items found for GSAP animations');
+          return;
+        }
 
         // Set initial opacity
         gsap.set(items, { opacity: (i: number) => (i !== 0 ? 0.2 : 1) });
@@ -235,7 +173,7 @@ export default function WordScroller({
           gsap.set(items, { opacity: 1 });
           gsap.set(document.documentElement, { '--chroma': 0 });
         }
-      }
+      }, 100);
     }
 
     // Cleanup function

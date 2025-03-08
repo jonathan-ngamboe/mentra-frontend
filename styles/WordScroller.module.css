@@ -89,8 +89,8 @@
 /* Badges */
 .comingSoonBadge {
   position: absolute;
-  top: 0.5rem;
-  right: 3rem;
+  top: 0;
+  right: 0;
   opacity: 0.8;
 }
 
@@ -107,7 +107,7 @@
 
 /* Supports tag for view timelines */
 @supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
-  html[data-animate="true"] .wordScroller ul {
+  .wordScroller ul {
     view-timeline: --list;
   }
 }
