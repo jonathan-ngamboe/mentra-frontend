@@ -19,6 +19,9 @@ export default function WordScroller({
   debug = false,
   className = '',
   endWord = '',
+  title = '',
+  description = '',
+  action = '',
 }: WordScrollerProps) {
   const [mounted, setMounted] = useState(false);
   const listItemsRef = useRef<Array<HTMLLIElement | null>>([]);
@@ -210,7 +213,42 @@ export default function WordScroller({
   if (!mounted) return null;
 
   return (
-    <div className={`pt-16 word-scroller ${className}`}>
+    <div className={`word-scroller ${className}`}>
+      <header className="min-h-screen flex w-full place-items-center relative justify-center">
+        <div className="relative max-w-4xl px-4 md:px-8 text-center">
+          <h1 className="block text-sm md:text-base uppercase tracking-widest text-foreground/60 mb-4 font-medium">
+            {title}
+          </h1>
+
+          <div className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-gradient">
+            <span className="relative inline-block">
+              <h2 className="relative">{description}</h2>
+              <span className="absolute -bottom-2 left-0 w-full h-3 bg-primary transform -skew-x-12"></span>
+            </span>
+          </div>
+
+          <p className="mt-8 text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto">
+            {action}
+          </p>
+        </div>
+
+        <div className="absolute bottom-20 md:bottom-8 left-0 right-0 mx-auto w-10 h-10 flex items-center justify-center rounded-full transition-colors">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="animate-bounce opacity-60"
+          >
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </div>
+      </header>
       <section className="content fluid">
         <h2>
           <span aria-hidden="true">{prefix}&nbsp;</span>

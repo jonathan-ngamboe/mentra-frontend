@@ -59,4 +59,19 @@ export interface WordScrollerProps {
    * The last word to display for accessibility
    */
   endWord: string;
+
+  /**
+   * Title
+   */
+  title: string;
+
+  /**
+   * Description
+   */
+  description: string;
+
+  /**
+   * Action
+   */
+  action: string;
 }
