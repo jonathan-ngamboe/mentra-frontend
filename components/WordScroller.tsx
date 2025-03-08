@@ -67,6 +67,7 @@ export default function WordScroller({
   }, []);
 
   // Debug
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     document.documentElement.dataset.syncScrollbar = showScrollbar.toString();
     document.documentElement.dataset.animate = animate.toString();
@@ -103,12 +104,10 @@ export default function WordScroller({
     let chromaExit: gsap.core.Tween | null = null;
 
     // Debug
-    let touchScrolling = false;
 
     document.addEventListener(
       'touchstart',
       () => {
-        touchScrolling = true;
         if (dimmerScrub) dimmerScrub.disable();
         if (scrollerScrub) scrollerScrub.disable();
       },
@@ -118,7 +117,6 @@ export default function WordScroller({
     document.addEventListener(
       'touchend',
       () => {
-        touchScrolling = false;
         setTimeout(() => {
           if (animate) {
             if (dimmerScrub) dimmerScrub.enable();
