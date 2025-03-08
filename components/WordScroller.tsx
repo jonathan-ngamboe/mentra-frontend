@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Badge } from '@/components/ui/badge';
-import { useTransitionNavigation } from '@/components/transitions/useTransitionNavigation';
 import { WordScrollerProps, WordItem } from '@/types/WordScroller';
-import styles from '@/styles/WordScroller.module.css';
 import '@/styles/WordScroller.css';
 
 export default function WordScroller({
@@ -21,38 +19,13 @@ export default function WordScroller({
   className = '',
   endWord = '',
 }: WordScrollerProps) {
-  const itemsRef = useRef<HTMLLIElement[]>([]);
   const [mounted, setMounted] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { navigateWithTransition } = useTransitionNavigation();
 
   // Normalize words
   const wordsArray = Array.isArray(words) ? words : [];
   const normalizedWords: WordItem[] = wordsArray.map((item) =>
     typeof item === 'string' ? { text: item, link: '#' } : item
   );
-
-  // Handle word click - either scroll to it or navigate to link
-  const handleWordClick = (index: number, link: string) => {
-    if (link !== '' && index === activeIndex) {
-      // If a link is set, navigate to that link
-      navigateWithTransition(link);
-    } else {
-      // Otherwise, update active index without forcing scroll
-      setActiveIndex(index);
-      // smooth scroll without disrupting snap scroll
-      const element = itemsRef.current[index];
-      if (element) {
-        // Use requestAnimationFrame to avoid conflicts
-        requestAnimationFrame(() => {
-          element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-          });
-        });
-      }
-    }
-  };
 
   useEffect(() => {
     setMounted(true);
@@ -63,6 +36,17 @@ export default function WordScroller({
 
     // Set up config
     const root = document.documentElement;
+
+    // Save original values to restore later
+    const originalSnap = root.dataset.snap;
+    const originalAnimate = root.dataset.animate;
+    const originalSyncScrollbar = root.dataset.syncScrollbar;
+    const originalDebug = root.dataset.debug;
+    const originalHue = root.style.getPropertyValue('--hue');
+    const originalStart = root.style.getPropertyValue('--start');
+    const originalEnd = root.style.getPropertyValue('--end');
+
+    // Apply new values
     root.dataset.syncScrollbar = showScrollbar.toString();
     root.dataset.animate = animate.toString();
     root.dataset.snap = snap.toString();
@@ -70,6 +54,8 @@ export default function WordScroller({
     root.style.setProperty('--start', startHue.toString());
     root.style.setProperty('--hue', startHue.toString());
     root.style.setProperty('--end', endHue.toString());
+    root.style.setProperty('--lightness', '65%');
+    root.style.setProperty('--base-chroma', '0.3');
 
     // Variables for GSAP
     let items: HTMLElement[] = [];
@@ -80,9 +66,14 @@ export default function WordScroller({
 
     // Use GSAP if CSS scroll animations not supported
     if (!CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
-      const wordScrollerElement = document.querySelector(`.${styles.wordScroller}`);
-      if (wordScrollerElement) {
-        items = gsap.utils.toArray<HTMLElement>(`.${styles.wordScroller} ul li`);
+      // IMPORTANT: Select elements after they are rendered
+      setTimeout(() => {
+        items = gsap.utils.toArray<HTMLElement>('.word-scroller section:first-of-type ul li');
+
+        if (items.length === 0) {
+          console.error('No items found for GSAP animations');
+          return;
+        }
 
         // Set initial opacity
         gsap.set(items, { opacity: (i: number) => (i !== 0 ? 0.2 : 1) });
@@ -180,11 +171,34 @@ export default function WordScroller({
           gsap.set(items, { opacity: 1 });
           gsap.set(document.documentElement, { '--chroma': 0 });
         }
-      }
+      }, 100);
     }
 
     // Cleanup function
     return () => {
+      // Restoring original values
+      if (originalSnap !== undefined) root.dataset.snap = originalSnap;
+      else delete root.dataset.snap;
+
+      if (originalAnimate !== undefined) root.dataset.animate = originalAnimate;
+      else delete root.dataset.animate;
+
+      if (originalSyncScrollbar !== undefined) root.dataset.syncScrollbar = originalSyncScrollbar;
+      else delete root.dataset.syncScrollbar;
+
+      if (originalDebug !== undefined) root.dataset.debug = originalDebug;
+      else delete root.dataset.debug;
+
+      if (originalHue) root.style.setProperty('--hue', originalHue);
+      else root.style.removeProperty('--hue');
+
+      if (originalStart) root.style.setProperty('--start', originalStart);
+      else root.style.removeProperty('--start');
+
+      if (originalEnd) root.style.setProperty('--end', originalEnd);
+      else root.style.removeProperty('--end');
+
+      // Clean up GSAP animations
       if (scrollerScrub) scrollerScrub.kill();
       if (dimmerScrub) dimmerScrub.kill();
       if (chromaEntry?.scrollTrigger) chromaEntry.scrollTrigger.kill();
@@ -195,25 +209,24 @@ export default function WordScroller({
   if (!mounted) return null;
 
   return (
-    <main className={`${styles.wordScroller} ${className}`}>
-      <section className={styles.fluid}>
+    <div className={`word-scroller ${className}`}>
+      <section className="content fluid">
         <h2>
           <span aria-hidden="true">{prefix}&nbsp;</span>
+          <span className="sr-only">
+            {prefix} {normalizedWords[0]?.text}.
+          </span>
         </h2>
         <ul aria-hidden="true" style={{ '--count': normalizedWords.length } as React.CSSProperties}>
           {normalizedWords.map((word, index) => (
             <li
               key={index}
-              ref={(el) => {
-                if (el) itemsRef.current[index] = el;
-              }}
-              style={{ '--i': index, cursor: 'pointer' } as React.CSSProperties}
-              className={ `${index === normalizedWords.length - 1 ? styles.lastWord : ''} relative`}
-              onClick={() => handleWordClick(index, word.link)}
+              style={{ '--i': index } as React.CSSProperties}
+              className={index === normalizedWords.length - 1 ? 'last-word' : ''}
             >
               {word.text}.
               {word.badge && (
-                <Badge variant="destructive" className={styles.comingSoonBadge}>
+                <Badge variant="destructive" className="coming-soon-badge">
                   {word.badge}
                 </Badge>
               )}
@@ -222,8 +235,8 @@ export default function WordScroller({
         </ul>
       </section>
       <section>
-        <h2 className={styles.fluid}>{endWord}</h2>
+        <h2 className="fluid">{endWord}</h2>
       </section>
-    </main>
+    </div>
   );
 }
