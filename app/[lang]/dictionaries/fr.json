@@ -68,12 +68,27 @@
         "noAnswer": "Pas de réponse",
         "reviewDescription": "Clique sur n'importe quelle question pour la revoir.",
         "reviewAnswers": "Revoir mes réponses",
+        "onboarding": {
+          "step1": {
+            "title": "Bienvenue à ton test d'orientation professionnelle",
+            "description": "Ce test peut t’aider à découvrir tes centres d’intérêt et leur lien avec le monde du travail. Il t’aidera à mieux cerner les métiers qui pourraient te plaire.\n\nQuand le test commence, clique sur un emoji pour répondre à chaque question. Tu peux utiliser le bouton Précédent à tout moment pour modifier tes réponses."
+          },
+          "step2": {
+            "title": "Comment ça marche?",
+            "description": "Le test comporte {questions_count} questions sur des activités professionnelles que certaines personnes exercent dans le cadre de leur travail.\n\nLis attentivement chaque question et indique ce que tu ressens pour chaque type de travail en choisissant l’un des emojis suivants:"
+          },
+          "step3": {
+            "title": "Prêt à commencer?",
+            "description": "Essaie de <b>NE PAS</b> penser à :\n\n- Si tu as assez de formation ou d'études pour faire ce travail.\n- Combien tu pourrais gagner en le faisant.\n\nConcentre-toi simplement sur une chose:\n<b>Est-ce que tu aimerais ou non faire ce travail?</b>"
+          },
+          "startButton": "Commencer le test"
+        },
         "answerOptions": {
-          "stronglyDislike": "Je déteste",
+          "hate": "Je déteste",
           "dislike": "Je n'aime pas",
           "neutral": "Neutre",
           "like": "J'aime",
-          "stronglyLike": "J'adore"
+          "love": "J'adore"
         },
         "finish": "Terminer",
         "results": {

@@ -69,12 +69,27 @@
         "reviewDescription": "Click on any question to review it.",
         "reviewAnswers": "Review my answers",
         "backToQuestions": "Back to questions",
+        "onboarding": {
+          "step1": {
+            "title": "Welcome to your career orientation test",
+            "description": "This test can help you discover your interests and how they relate to the world of work. It can give you ideas about which careers might suit you.\n\nWhen the test begins, click an emoji to answer each question. You can use the Back button anytime to change your answers."
+          },
+          "step2": {
+            "title": "How does it work?",
+            "description": "The test includes {questions_count} questions about professional activities that some people do as part of their job.\n\nRead each question carefully and choose how you feel about each type of work using the emojis below:"
+          },
+          "step3": {
+            "title": "Ready to start?",
+            "description": "Try <b>NOT</b> to think about:\n\n- Whether you have enough education or training to do the work.\n- How much money you would make doing the work.\n\nJust focus on this:\n<b>Would you like or dislike doing the work?</b>"
+          },
+          "startButton": "Start the test"
+        },
         "answerOptions": {
-          "stronglyDislike": "I hate it",
+          "hate": "I hate it",
           "dislike": "I don't like it",
           "neutral": "Neutral",
           "like": "I like it",
-          "stronglyLike": "I love it"
+          "love": "I love it"
         },
         "results": {
           "title": "Results",

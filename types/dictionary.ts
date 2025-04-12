@@ -67,12 +67,27 @@ export interface Dictionary {
       reviewAnswers: string;
       noAnswer: string;
       backToQuestions: string;
+      onboarding: {
+        step1: {
+          title: string;
+          description: string;
+        };
+        step2: {
+          title: string;
+          description: string;
+        };
+        step3: {
+          title: string;
+          description: string;
+        };
+        startButton: string;
+      };
       answerOptions: {
-        stronglyDislike: string;
+        hate: string;
         dislike: string;
         neutral: string;
         like: string;
-        stronglyLike: string;
+        love: string;
       };
       results: {
         title: string;
