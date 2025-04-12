@@ -6,6 +6,10 @@ export interface Dictionary {
     contact: string;
     loading: string;
     clickToKnowMore: string;
+    next: string;
+    previous: string;
+    submit: string;
+    completed: string;
   };
   badges: {
     new: string;
@@ -55,12 +59,21 @@ export interface Dictionary {
       action: string;
       subtitle: string;
       description: string;
+      questionnaireDescription: string;
       duration: string;
       cta: string;
       question: string;
-      next: string;
-      previous: string;
-      finish: string;
+      reviewDescription: string;
+      reviewAnswers: string;
+      noAnswer: string;
+      backToQuestions: string;
+      answerOptions: {
+        stronglyDislike: string;
+        dislike: string;
+        neutral: string;
+        like: string;
+        stronglyLike: string;
+      };
       results: {
         title: string;
         description: string;

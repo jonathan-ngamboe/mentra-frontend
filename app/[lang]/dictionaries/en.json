@@ -5,7 +5,11 @@
       "discover": "Discover",
       "contact": "Contact",
       "loading": "Loading...",
-      "clickToKnowMore": "Click to know more"
+      "clickToKnowMore": "Click to know more",
+      "next": "Next",
+      "previous": "Previous",
+      "submit": "Submit",
+      "completed": "Completed"
     },
     "badges": {
       "new": "New",
@@ -57,11 +61,21 @@
         "action": "Find your career",
         "duration": "15-20 minutes",
         "description": "Discover the job that suits you through a simple and personalized journey that analyzes your personality, skills and aspirations to offer you the best professional opportunities.",
+        "questionnaireDescription": "Click on an emoji to answer the question.",
         "cta": "Get started now",
         "question": "Question",
-        "next": "Next",
-        "previous": "Previous",
         "finish": "Finish",
+        "noAnswer": "No answer",
+        "reviewDescription": "Click on any question to review it.",
+        "reviewAnswers": "Review my answers",
+        "backToQuestions": "Back to questions",
+        "answerOptions": {
+          "stronglyDislike": "I hate it",
+          "dislike": "I don't like it",
+          "neutral": "Neutral",
+          "like": "I like it",
+          "stronglyLike": "I love it"
+        },
         "results": {
           "title": "Results",
           "description": "Here are the results of your career orientation test.",

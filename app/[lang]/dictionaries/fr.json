@@ -5,7 +5,11 @@
       "discover": "Découvrir",
       "contact": "Contact",
       "loading": "Chargement...",
-      "clickToKnowMore": "Clique pour en savoir plus"
+      "clickToKnowMore": "Clique pour en savoir plus",
+      "next": "Suivant",
+      "previous": "Précédent",
+      "submit": "Soumettre",
+      "completed": "Complet"
     },
     "badges": {
       "new": "Nouveau",
@@ -56,11 +60,21 @@
         "action": "Trouver ta voie",
         "subtitle": "Trouve ta voie professionnelle en quelques clics",
         "description": "Découvre le métier fait pour toi à travers un parcours simple et personnalisé qui analyse ta personnalité, tes compétences et tes aspirations pour te proposer les meilleures opportunités professionnelles.",
+        "questionnaireDescription": "Clique sur un emoji pour répondre à la question.",
         "duration": "15-20 minutes",
         "cta": "Commence maintenant",
         "question": "Question",
-        "next": "Suivant",
-        "previous": "Précédent",
+        "backToQuestions": "Retour aux questions",
+        "noAnswer": "Pas de réponse",
+        "reviewDescription": "Clique sur n'importe quelle question pour la revoir.",
+        "reviewAnswers": "Revoir mes réponses",
+        "answerOptions": {
+          "stronglyDislike": "Je déteste",
+          "dislike": "Je n'aime pas",
+          "neutral": "Neutre",
+          "like": "J'aime",
+          "stronglyLike": "J'adore"
+        },
         "finish": "Terminer",
         "results": {
           "title": "Résultats",
