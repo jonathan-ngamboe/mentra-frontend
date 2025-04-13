@@ -74,9 +74,8 @@ export function Questionnaire({ dictionary, questions, onSubmit }: Questionnaire
 
   const handleSubmit = () => {
     if (onSubmit) {
-      // Convert index 0-4 to values 1-5
       const mappedResponses = selectedEmojis.map((emojiIndex) =>
-        emojiIndex !== null ? emojiIndex + 1 : null
+        emojiIndex !== null ? emojiIndex : null
       );
       onSubmit(mappedResponses);
     }
