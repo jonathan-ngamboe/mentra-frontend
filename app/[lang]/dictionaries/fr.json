@@ -60,7 +60,7 @@
         "action": "Trouver ta voie",
         "subtitle": "Trouve ta voie professionnelle en quelques clics",
         "description": "Découvre le métier fait pour toi à travers un parcours simple et personnalisé qui analyse ta personnalité, tes compétences et tes aspirations pour te proposer les meilleures opportunités professionnelles.",
-        "questionnaireDescription": "Clique sur un emoji pour répondre à la question.",
+        "questionnaireDescription": "Quel est ton ressenti face à cette activité ? Clique sur l’emoji qui te parle le plus!",
         "duration": "15-20 minutes",
         "cta": "Commence maintenant",
         "question": "Question",
@@ -79,7 +79,7 @@
           },
           "step3": {
             "title": "Prêt à commencer?",
-            "description": "Essaie de <b>NE PAS</b> penser à :\n\n- Si tu as assez de formation ou d'études pour faire ce travail.\n- Combien tu pourrais gagner en le faisant.\n\nConcentre-toi simplement sur une chose:\n<b>Est-ce que tu aimerais ou non faire ce travail?</b>"
+            "description": "Essaie de <b>NE PAS</b> penser à :\n\n- Si tu as assez de formation ou d'études pour faire ce travail.\n- Combien tu pourrais gagner en le faisant.\n\nConcentre-toi simplement sur une chose :\n<b>Est-ce que tu aimerais ou non faire ce travail ?</b>\n\nEt prends ton temps pour répondre aux questions — rien ne presse !"
           },
           "startButton": "Commencer le test"
         },
@@ -112,7 +112,8 @@
       "user_not_found": "Utilisateur introuvable",
       "invalid_credentials": "Identifiants invalides",
       "access_denied_description": "Tu n'as pas les droits nécessaires pour accéder à cette page.",
-      "rateLimitExceeded": "Trop de tentatives. Réessaie plus tard."
+      "rateLimitExceeded": "Trop de tentatives. Réessaie plus tard.",
+      "noQuestions": "Aucune question trouvée"
     },
     "login": {
       "welcome": "👋 Ravis de te voir!",

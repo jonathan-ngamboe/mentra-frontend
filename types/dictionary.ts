@@ -111,6 +111,7 @@ export interface Dictionary {
     invalid_credentials: string;
     access_denied_description: string;
     rateLimitExceeded: string;
+    noQuestions: string;
   };
   login: {
     welcome: string;

@@ -61,7 +61,7 @@
         "action": "Find your career",
         "duration": "15-20 minutes",
         "description": "Discover the job that suits you through a simple and personalized journey that analyzes your personality, skills and aspirations to offer you the best professional opportunities.",
-        "questionnaireDescription": "Click on an emoji to answer the question.",
+        "questionnaireDescription": "What’s your feeling about this activity? Tap the emoji that feels right to you!",
         "cta": "Get started now",
         "question": "Question",
         "finish": "Finish",
@@ -80,7 +80,7 @@
           },
           "step3": {
             "title": "Ready to start?",
-            "description": "Try <b>NOT</b> to think about:\n\n- Whether you have enough education or training to do the work.\n- How much money you would make doing the work.\n\nJust focus on this:\n<b>Would you like or dislike doing the work?</b>"
+            "description": "Try <b>NOT</b> to think about:\n\n- Whether you have enough education or training to do the work.\n- How much money you would make doing the work.\n\nJust focus on this:\n<b>Would you like or dislike doing the work?</b>\n\nAnd take your time answering the questions — there’s no need to rush!"
           },
           "startButton": "Start the test"
         },
@@ -113,7 +113,8 @@
       "user_not_found": "User not found",
       "invalid_credentials": "Invalid credentials",
       "access_denied_description": "You do not have the necessary rights to access this page",
-      "rateLimitExceeded": "Too many requests. Please try again later"
+      "rateLimitExceeded": "Too many requests. Please try again later",
+      "noQuestions": "No questions available"
     },
     "login": {
       "welcome": "👋 Nice to see you!",
