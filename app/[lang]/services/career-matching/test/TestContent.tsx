@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { useIsMobile } from '@/hooks/useIsMobile';
+
 import { Questionnaire } from '@/components/Questionnaire';
 import { OnboardingCard } from '@/components/OnboardingCard';
 import { Loading } from '@/components/Loading';
@@ -21,6 +23,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
   const [questions, setQuestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const handleOnboardingComplete = () => {
     setShowQuestionnaire(true);
@@ -29,7 +32,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
   useEffect(() => {
     const loadQuestions = async () => {
       try {
-        const fetchedQuestions = await fetchQuestions(lang);
+        const fetchedQuestions = await fetchQuestions(lang, isMobile ? 30 : undefined);
         setQuestions(fetchedQuestions);
       } catch (error) {
         setError(`${error}`);
@@ -39,7 +42,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
     };
 
     loadQuestions();
-  }, [lang]);
+  }, [lang, isMobile]);
 
   if (loading) {
     return <Loading />;
