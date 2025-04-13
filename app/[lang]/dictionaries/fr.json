@@ -9,7 +9,11 @@
       "next": "Suivant",
       "previous": "Précédent",
       "submit": "Soumettre",
-      "completed": "Complet"
+      "completed": "Complet",
+      "grid": "Grille",
+      "list": "Liste",
+      "chart": "Graphique",
+      "score": "Score"
     },
     "badges": {
       "new": "Nouveau",
@@ -59,7 +63,9 @@
         "title": "Orientation professionnelle",
         "action": "Trouver ta voie",
         "subtitle": "Trouve ta voie professionnelle en quelques clics",
-        "description": "Découvre le métier fait pour toi à travers un parcours simple et personnalisé qui analyse ta personnalité, tes compétences et tes aspirations pour te proposer les meilleures opportunités professionnelles.",
+        "whatIsRiasec": "Qu'est-ce que RIASEC ?",
+        "riasecDescription": "Le modèle RIASEC est une théorie de l’orientation professionnelle qui aide à comprendre ses intérêts et leur lien avec différents types de métiers. Il identifie six grands types d’intérêts : Réaliste, Investigateur, Artistique, Social, Entreprenant et Conventionnel.",
+        "description": "Découvre le métier fait pour toi grâce à un parcours simple et personnalisé qui analyse ta personnalité, tes compétences et tes aspirations afin de te proposer les opportunités professionnelles les plus adaptées.",
         "questionnaireDescription": "Quel est ton ressenti face à cette activité ? Clique sur l’emoji qui te parle le plus!",
         "duration": "15-20 minutes",
         "cta": "Commence maintenant",
@@ -93,7 +99,37 @@
         "finish": "Terminer",
         "results": {
           "title": "Résultats",
-          "description": "Voici les métiers qui te correspondent le plus."
+          "description": "Ton profil d’intérêts professionnels",
+          "matchesDescription": "Voici les métiers qui correspondent le mieux à ton profil.",
+          "topMatches": "Métiers les plus compatibles",
+          "noMatches": "Aucun métier ne correspond à ton profil pour le moment.",
+          "footer": "Basé sur la typologie RIASEC de Holland."
+        },
+        "dimensions": {
+          "R": {
+            "name": "Réaliste",
+            "description": "Les personnes réalistes aiment travailler avec leurs mains et préfèrent les activités pratiques aux activités théoriques. Elles sont souvent attirées par des métiers techniques ou manuels."
+          },
+          "I": {
+            "name": "Investigateur",
+            "description": "Les personnes investigatrices aiment résoudre des problèmes et analyser des données. Elles sont souvent attirées par des métiers scientifiques ou techniques."
+          },
+          "A": {
+            "name": "Artistique",
+            "description": "Les personnes artistiques aiment exprimer leur créativité et préfèrent les activités non structurées. Elles sont souvent attirées par des métiers artistiques ou culturels."
+          },
+          "S": {
+            "name": "Social",
+            "description": "Les personnes sociales aiment aider les autres et préfèrent les activités interpersonnelles. Elles sont souvent attirées par des métiers liés à l'éducation ou à la santé."
+          },
+          "E": {
+            "name": "Entreprenant",
+            "description": "Les personnes entreprenantes aiment diriger et persuader les autres. Elles sont souvent attirées par des métiers liés aux affaires ou à la vente."
+          },
+          "C": {
+            "name": "Conventionnel",
+            "description": "Les personnes conventionnelles aiment suivre des règles et préfèrent les activités structurées. Elles sont souvent attirées par des métiers administratifs ou de gestion."
+          }
         }
       },
       "events": {

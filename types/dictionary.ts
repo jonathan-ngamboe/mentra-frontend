@@ -10,6 +10,10 @@ export interface Dictionary {
     previous: string;
     submit: string;
     completed: string;
+    grid: string;
+    list: string;
+    chart: string;
+    score: string;
   };
   badges: {
     new: string;
@@ -59,6 +63,8 @@ export interface Dictionary {
       action: string;
       subtitle: string;
       description: string;
+      riasecDescription: string;
+      whatIsRiasec: string;
       questionnaireDescription: string;
       duration: string;
       cta: string;
@@ -92,6 +98,36 @@ export interface Dictionary {
       results: {
         title: string;
         description: string;
+        matchesDescription: string;
+        topMatches: string;
+        noMatches: string;
+        footer: string;
+      };
+      dimensions: {
+        R: {
+          name: string;
+          description: string;
+        };
+        I: {
+          name: string;
+          description: string;
+        };
+        A: {
+          name: string;
+          description: string;
+        };
+        S: {
+          name: string;
+          description: string;
+        };
+        E: {
+          name: string;
+          description: string;
+        };
+        C: {
+          name: string;
+          description: string;
+        };
       };
     };
     events: {
