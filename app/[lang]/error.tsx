@@ -10,7 +10,7 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="flex h-screen w-full items-center justify-center">
+    <div className="flex h-screen w-full items-center justify-center p-4 bg-destructive/10 text-destructive rounded-md">
       <div className="flex max-w-md flex-col items-center gap-4 p-6 text-center">
         <div className="space-y-2">
           <h2 className="text-3xl font-bold">Oops!</h2>
