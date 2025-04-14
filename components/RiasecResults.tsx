@@ -14,14 +14,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-} from '@/components/ui/chart';
+import { ChartConfig, ChartContainer, ChartTooltip } from '@/components/ui/chart';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { InfoIcon, ExternalLinkIcon, BarChart3Icon, RadarIcon } from 'lucide-react';
 import { RiasecResultsProps, RiasecKey } from '@/types/riasec';
+import { RIASEC_COLORS } from '@/constants/riasec';
 
 export function RiasecResults({ profile, professionMatches, dictionary }: RiasecResultsProps) {
   const [activeTab, setActiveTab] = useState('radar');
@@ -149,6 +146,7 @@ export function RiasecResults({ profile, professionMatches, dictionary }: Riasec
                       dataKey="subject"
                       tick={(props) => {
                         const { x, y, payload } = props;
+                        const color = RIASEC_COLORS[payload.value as RiasecKey];
                         return (
                           <g transform={`translate(${x},${y})`}>
                             <text
@@ -156,7 +154,7 @@ export function RiasecResults({ profile, professionMatches, dictionary }: Riasec
                               y={0}
                               dy={4}
                               textAnchor="middle"
-                              fill="currentColor"
+                              fill={color}
                               fontSize="14"
                               fontWeight="bold"
                             >
@@ -192,7 +190,12 @@ export function RiasecResults({ profile, professionMatches, dictionary }: Riasec
                             <div className="space-y-1">
                               <p className="text-sm font-bold">{data.fullName}</p>
                               <div className="flex items-center gap-1.5 text-primary rounded-full px-2.5 py-1 text-xs font-medium">
-                                <span className="inline-block w-2 h-2 rounded-full bg-primary"></span>
+                                <span
+                                  className="inline-block w-2 h-2 rounded-full"
+                                  style={{
+                                    backgroundColor: RIASEC_COLORS[data.subject as RiasecKey],
+                                  }}
+                                ></span>
                                 {dictionary.common.score}:{' '}
                                 <span className="font-bold">{data.value}</span>
                               </div>
@@ -225,20 +228,23 @@ export function RiasecResults({ profile, professionMatches, dictionary }: Riasec
 
             <TabsContent value="grid" className="mt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {sortedProfile.map(({ description, score, label }) => (
-                  <Card key={label} className="overflow-hidden">
-                    <CardHeader className="p-4 pb-2">
-                      <div className="flex justify-between items-center">
-                        <CardTitle className="text-2xl font-bold">{label}</CardTitle>
-                        <Badge variant="outline">{score}</Badge>
-                      </div>
-                      <CardDescription className="line-clamp-8">{description}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-2">
-                      <Progress value={(score / maxScore) * 100} className="h-2" />
-                    </CardContent>
-                  </Card>
-                ))}
+                {sortedProfile.map(({ dimension, description, score, label }) => {
+                  const color = RIASEC_COLORS[dimension as RiasecKey];
+                  return (
+                    <Card key={label} className="overflow-hidden">
+                      <CardHeader className="p-4 pb-2">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-2xl font-bold">{label}</CardTitle>
+                          <Badge style={{ backgroundColor: color, color: 'white' }}>{score}</Badge>
+                        </div>
+                        <CardDescription className="line-clamp-8">{description}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-2">
+                        <Progress value={(score / maxScore) * 100} className="h-2" />
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </TabsContent>
           </Tabs>
