@@ -66,7 +66,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
       }
     }
     getUser();
-  }, []);
+  }, [dict.error.accessDenied]);
 
   // Load existing profile if user is available
   useEffect(() => {
