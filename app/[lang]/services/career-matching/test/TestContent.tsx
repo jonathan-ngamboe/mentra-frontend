@@ -20,6 +20,7 @@ import {
 } from '@/services/riasec';
 
 import { Dictionary } from '@/types/dictionary';
+import { ProfessionMatch, RiasecScores } from '@/types/riasec';
 
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
@@ -42,8 +43,8 @@ export default function TestContent({ dict, lang }: TestContentProps) {
   const [questionsError, setQuestionsError] = useState<string | null>(null);
   const [userError, setUserError] = useState<string | null>(null);
 
-  const [riasecProfile, setRiasecProfile] = useState<any>(null);
-  const [professionMatches, setProfessionMatches] = useState<any[]>([]);
+  const [riasecProfile, setRiasecProfile] = useState<RiasecScores | null>(null);
+  const [professionMatches, setProfessionMatches] = useState<ProfessionMatch[]>([]);
 
   const isMobile = useIsMobile();
 
