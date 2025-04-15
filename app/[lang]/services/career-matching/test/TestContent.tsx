@@ -117,7 +117,9 @@ export default function TestContent({ dict, lang }: TestContentProps) {
       if (results) {
         if (results.profile) {
           setRiasecProfile(results.profile);
-          await saveUserRiasecResults(user?.id!, results.profile);
+          if (user) {
+            await saveUserRiasecResults(user.id, results.profile);
+          }
         }
         if (results.professions) {
           setProfessionMatches(results.professions);
