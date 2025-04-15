@@ -140,16 +140,16 @@
       }
     },
     "error": {
-      "default": "An error occurred",
-      "access_denied": "Access denied",
-      "otp_expired": "Code expired or invalid",
-      "email_link_invalid": "Login link invalid",
-      "email_not_confirmed": "Your email address has not been confirmed",
-      "user_not_found": "User not found",
-      "invalid_credentials": "Invalid credentials",
-      "access_denied_description": "You do not have the necessary rights to access this page",
-      "rateLimitExceeded": "Too many requests. Please try again later",
-      "noQuestions": "No questions available"
+      "default": "Oops, something went wrong.",
+      "accessDenied": "Oops, you don’t have the necessary permissions to access this page.",
+      "otpExpired": "Oops, that code has expired or is invalid.",
+      "emailLinkInvalid": "Oops, the login link is invalid.",
+      "emailNotConfirmed": "Oops, your email address hasn’t been confirmed yet.",
+      "userNotFound": "Oops, we couldn’t find a user with that info.",
+      "invalidCredentials": "Oops, those credentials are incorrect.",
+      "rateLimitExceeded": "Too many attempts. Please try again in a moment.",
+      "noQuestions": "No questions found.",
+      "invalidResults": "Oops, the results seem invalid. Try again?"
     },
     "login": {
       "welcome": "👋 Nice to see you!",

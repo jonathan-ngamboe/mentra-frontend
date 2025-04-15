@@ -139,15 +139,15 @@ export interface Dictionary {
   };
   error: {
     default: string;
-    access_denied: string;
-    otp_expired: string;
-    email_link_invalid: string;
-    email_not_confirmed: string;
-    user_not_found: string;
-    invalid_credentials: string;
-    access_denied_description: string;
+    accessDenied: string;
+    otpExpired: string;
+    emailLinkInvalid: string;
+    emailNotConfirmed: string;
+    userNotFound: string;
+    invalidCredentials: string;
     rateLimitExceeded: string;
     noQuestions: string;
+    invalidResults: string;
   };
   login: {
     welcome: string;
