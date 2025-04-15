@@ -60,6 +60,43 @@ async function getRiasecDimensionIds(): Promise<Record<string, number>> {
 }
 
 /**
+ * Get RIASEC dimension names from the database
+ */
+async function getRiasecDimensionNames(): Promise<Record<number, keyof RiasecScores>> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from('riasec_dimension').select('id, name');
+
+  if (error) {
+    throw new Error(`Error fetching RIASEC dimension names - ${error.message}`);
+  }
+
+  const mapping: Record<number, keyof RiasecScores> = {};
+  data?.forEach((dim) => {
+    mapping[dim.id] = dim.name as keyof RiasecScores;
+  });
+
+  return mapping;
+}
+
+async function getRiasecDimensions(): Promise<Record<string, number>> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from('riasec_dimension').select('id, name');
+
+  if (error) {
+    throw new Error(`Error fetching RIASEC dimensions - ${error.message}`);
+  }
+
+  const dimensionMap: Record<string, number> = {};
+  data?.forEach((dimension) => {
+    dimensionMap[dimension.name] = dimension.id;
+  });
+
+  return dimensionMap;
+}
+
+/**
  * Save the RIASEC results of a user
  */
 export async function saveUserRiasecResults(userId: string, profile: RiasecScores): Promise<void> {
@@ -72,6 +109,15 @@ export async function saveUserRiasecResults(userId: string, profile: RiasecScore
     throw new Error('Riasec Dimension IDs not found');
   }
 
+  const letterToFullNameMap: Record<string, string> = {
+    R: 'Realistic',
+    I: 'Investigative',
+    A: 'Artistic',
+    S: 'Social',
+    E: 'Enterprising',
+    C: 'Conventional',
+  };
+
   // Delete previous results for the user, if any
   const { error: deleteError } = await supabase
     .from('riasec_evaluation')
@@ -83,52 +129,88 @@ export async function saveUserRiasecResults(userId: string, profile: RiasecScore
   }
 
   // Prepare new results to insert
-  const records = Object.entries(profile).map(([dim, score]) => ({
-    user_id: userId,
-    ri_di_is_type_of_id: RIASEC_DIMENSION_IDS[dim as keyof RiasecScores],
-    score,
-    created_at: now,
-    updated_at: now,
-    pro_has_id: null,
-  }));
+  const records = Object.entries(profile)
+    .map(([dim, score]) => {
+      const fullDimName = letterToFullNameMap[dim];
 
-  console.log('Saving records', records);
+      if (!fullDimName) {
+        return null; // Ignore this record if the full name is not found
+      }
 
-  // Insert new results
-  const { error: insertError } = await supabase.from('riasec_evaluation').insert(records);
+      const dimensionId = RIASEC_DIMENSION_IDS[fullDimName];
 
-  if (insertError) {
-    throw new Error(`Error saving user RIASEC results - ${insertError.message}`);
+      if (!dimensionId) {
+        return null; // Ignore this record if the ID is not found
+      }
+
+      return {
+        user_id: userId,
+        ri_di_is_type_of_id: dimensionId,
+        score,
+        created_at: now,
+        updated_at: now,
+        pro_has_id: null,
+      };
+    })
+    .filter(Boolean); // Filter out null values
+
+  if (records.length > 0) {
+    const { error: insertError } = await supabase.from('riasec_evaluation').insert(records);
+    if (insertError) {
+      throw new Error(`Error saving user RIASEC results - ${insertError.message}`);
+    }
   }
 }
 
 /**
  * Get the RIASEC profile of a user
  */
-export async function getUserRiasecProfile(userId: string): Promise<
-  Array<{
-    id: number;
-    profile: RiasecScores;
-    topProfessions: ProfessionMatch[];
-    createdAt: string;
-  }>
-> {
+export async function getUserRiasecResults(userId: string): Promise<RiasecResults | null> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('riasec_evaluation')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
+    .select('score, ri_di_is_type_of_id, pro_has_id')
+    .eq('user_id', userId);
 
   if (error) {
-    throw new Error(`Error fetching user RIASEC history - ${error.message}`);
+    throw new Error(`Error fetching user RIASEC results - ${error.message}`);
   }
 
-  return data.map((result) => ({
-    id: result.id,
-    profile: result.profile,
-    topProfessions: result.top_professions,
-    createdAt: result.created_at,
-  }));
+  if (!data || data.length === 0) {
+    return null;
+  }
+
+  const idToNameMap = await getRiasecDimensionNames();
+
+  const nameToLetter: Record<string, keyof RiasecScores> = {
+    Realistic: 'R',
+    Investigative: 'I',
+    Artistic: 'A',
+    Social: 'S',
+    Enterprising: 'E',
+    Conventional: 'C',
+  };
+
+  const profile: Partial<RiasecScores> = {};
+  const professions: ProfessionMatch[] = [];
+
+  for (const row of data) {
+    const fullName = idToNameMap[row.ri_di_is_type_of_id];
+    if (!fullName) continue;
+
+    const letter = nameToLetter[fullName];
+    if (!letter) continue;
+
+    profile[letter] = row.score;
+
+    if (row.pro_has_id) {
+      professions.push(row.pro_has_id);
+    }
+  }
+
+  return {
+    profile: profile as RiasecScores,
+    professions,
+  };
 }
