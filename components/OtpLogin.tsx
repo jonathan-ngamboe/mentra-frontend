@@ -110,7 +110,7 @@ export function OtpLogin({ dictionary, onSuccessRedirect }: OtpLoginProps) {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       if (errorMessage.includes('expired')) {
-        toast.error(dictionary.error.otp_expired);
+        toast.error(dictionary.error.otpExpired);
       } else {
         toast.error(dictionary.login.otp.invalidCode);
       }
