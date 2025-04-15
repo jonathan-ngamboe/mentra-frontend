@@ -11,7 +11,11 @@ import { Loading } from '@/components/Loading';
 import { RiasecResults } from '@/components/RiasecResults';
 
 import { fetchQuestions } from '@/services/database';
-import { calculateRiasecResults, saveUserRiasecResults, getUserRiasecProfile } from '@/services/riasec';
+import {
+  calculateRiasecResults,
+  saveUserRiasecResults,
+  getUserRiasecResults,
+} from '@/services/riasec';
 
 import { Dictionary } from '@/types/dictionary';
 
@@ -31,6 +35,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
 
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
   const [questionsError, setQuestionsError] = useState<string | null>(null);
   const [userError, setUserError] = useState<string | null>(null);
@@ -40,6 +45,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
 
   const isMobile = useIsMobile();
 
+  // Load the user
   useEffect(() => {
     async function getUser() {
       try {
@@ -59,6 +65,31 @@ export default function TestContent({ dict, lang }: TestContentProps) {
     getUser();
   }, []);
 
+  // Load existing profile if user is available
+  useEffect(() => {
+    if (!user) return;
+
+    const userId = user.id;
+
+    const loadProfile = async () => {
+      try {
+        const results = await getUserRiasecResults(userId);
+        console.log(results);
+        if (results) {
+          setRiasecProfile(results.profile);
+          setProfessionMatches(results.professions);
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    loadProfile();
+  }, [user]);
+
+  // Load questions
   useEffect(() => {
     async function loadQuestions() {
       try {
@@ -82,13 +113,12 @@ export default function TestContent({ dict, lang }: TestContentProps) {
     try {
       const results = await calculateRiasecResults(responses);
       if (results) {
-        console.log(results);
         if (results.profile) {
           setRiasecProfile(results.profile);
           await saveUserRiasecResults(user?.id!, results.profile);
         }
-        if (results.correlations) {
-          setProfessionMatches(results.correlations);
+        if (results.professions) {
+          setProfessionMatches(results.professions);
         }
         setShowQuestionnaire(false);
       } else {
@@ -101,7 +131,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
     }
   };
 
-  if (loadingQuestions || loadingUser) {
+  if (loadingUser || loadingQuestions || loadingProfile) {
     return <Loading text={dict.common.loading} />;
   }
 
@@ -119,8 +149,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
 
   return (
     <AnimatePresence mode="wait">
-      {riasecProfile ? (
-        // Show the results if available
+      {riasecProfile && Object.keys(riasecProfile).length > 0 ? (
         <motion.div
           key="results"
           initial={{ opacity: 0, y: 20 }}
@@ -135,7 +164,6 @@ export default function TestContent({ dict, lang }: TestContentProps) {
           />
         </motion.div>
       ) : !showQuestionnaire ? (
-        // Show the onboarding card if the questionnaire is not yet displayed
         <motion.div
           key="onboarding"
           initial={{ opacity: 0, y: 20 }}
