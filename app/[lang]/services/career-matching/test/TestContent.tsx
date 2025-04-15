@@ -9,6 +9,8 @@ import { Questionnaire } from '@/components/Questionnaire';
 import { OnboardingCard } from '@/components/OnboardingCard';
 import { Loading } from '@/components/Loading';
 import { RiasecResults } from '@/components/RiasecResults';
+import { Button } from '@/components/ui/button';
+import { RotateCcw } from 'lucide-react';
 
 import { fetchQuestions } from '@/services/database';
 import {
@@ -74,7 +76,6 @@ export default function TestContent({ dict, lang }: TestContentProps) {
     const loadProfile = async () => {
       try {
         const results = await getUserRiasecResults(userId);
-        console.log(results);
         if (results) {
           setRiasecProfile(results.profile);
           setProfessionMatches(results.professions);
@@ -131,6 +132,12 @@ export default function TestContent({ dict, lang }: TestContentProps) {
     }
   };
 
+  const handleRestart = async () => {
+    setRiasecProfile(null);
+    setProfessionMatches([]);
+    setShowQuestionnaire(false);
+  };
+
   if (loadingUser || loadingQuestions || loadingProfile) {
     return <Loading text={dict.common.loading} />;
   }
@@ -162,6 +169,12 @@ export default function TestContent({ dict, lang }: TestContentProps) {
             professionMatches={professionMatches}
             dictionary={dict}
           />
+          <div className="mt-6 flex justify-center">
+            <Button variant="outline" onClick={handleRestart} className="cursor-pointer gap-2">
+              <RotateCcw className="w-4 h-4" />
+              {dict.services.careerMatching.newTest}
+            </Button>
+          </div>
         </motion.div>
       ) : !showQuestionnaire ? (
         <motion.div
