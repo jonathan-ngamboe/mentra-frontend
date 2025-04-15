@@ -104,7 +104,7 @@ export default function TestContent({ dict, lang }: TestContentProps) {
       }
     }
     loadQuestions();
-  }, []);
+  }, [isMobile, lang]);
 
   const handleOnboardingComplete = () => {
     setShowQuestionnaire(true);
