@@ -73,6 +73,7 @@ export interface Dictionary {
       reviewAnswers: string;
       noAnswer: string;
       backToQuestions: string;
+      newTest: string;
       onboarding: {
         step1: {
           title: string;

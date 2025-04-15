@@ -74,6 +74,7 @@
         "noAnswer": "Pas de réponse",
         "reviewDescription": "Clique sur n'importe quelle question pour la revoir.",
         "reviewAnswers": "Revoir mes réponses",
+        "newTest": "Faire un nouveau test",
         "onboarding": {
           "step1": {
             "title": "Bienvenue à ton test d'orientation professionnelle",
