@@ -20,5 +20,5 @@ export type RiasecResultsProps = {
 
 export type RiasecResults = {
   profile: RiasecScores;
-  correlations: ProfessionMatch[];
+  professions: ProfessionMatch[];
 };
