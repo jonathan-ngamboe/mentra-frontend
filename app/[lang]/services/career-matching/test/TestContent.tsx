@@ -20,7 +20,8 @@ import {
 } from '@/services/riasec';
 
 import { Dictionary } from '@/types/dictionary';
-import { ProfessionMatch, RiasecScores } from '@/types/riasec';
+import { RiasecScores } from '@/types/riasec';
+import { ProfessionMatch } from '@/types/profession';
 
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
