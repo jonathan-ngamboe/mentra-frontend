@@ -2,9 +2,12 @@
 
 import { createClient } from '@/utils/supabase/server';
 
+import { Profession, BaseProfession, RawProfessionDbData } from '@/types/profession';
+import { RiasecScores, dimensionNameToKeyMap } from '@/types/riasec';
+
 type SupabaseRecord = Record<string, any>;
 
-/*
+/**
   Function to fetch the language ID from its code.
   @param lang - The language code (ex: 'en', 'fr', etc.)
   @returns The corresponding language ID from the database.
@@ -25,7 +28,7 @@ export async function fetchLanguageId(lang: string): Promise<number> {
   return data.id;
 }
 
-/*
+/**
   Function to fetch translations from the database.
   @param table - The name of the table to fetch data from.
   @param field - The field to be translated.
@@ -182,7 +185,7 @@ export async function fetchTranslation<T>({
   }
 }
 
-/*
+/**
   Function to fetch questions from the database.
   @param lang - The language code (default is 'en').
   @param limit - Maximum number of questions to return (optional).
@@ -199,7 +202,7 @@ export async function fetchQuestions(lang: string = 'en', limit?: number): Promi
   });
 }
 
-/*
+/**
   Function to fetch RIASEC dimensions from the database.
   @param lang - The language code (default is 'en').
   @returns An array of RIASEC dimensions.
@@ -213,23 +216,113 @@ export async function fetchDimensions(lang: string = 'en'): Promise<string[]> {
   });
 }
 
-/*
-  Function to fetch professions from the database.
-  @param lang - The language code (default is 'en').
-  @param qualificationLevelId - Optional filter for qualification level.
-  @returns An array of professions.
-*/
+/**
+ * Function to fetch active professions along with their RIASEC evaluation object.
+ * Handles translation for name, description, and activity_sector.
+ * Returns data matching the Profession type (BaseProfession & { riasecEvaluation: RiasecScores }).
+ * @param lang - The language code (default is 'en').
+ * @param qualificationLevelId - Optional filter for qualification level.
+ * @returns An array of active professions with their RIASEC evaluations.
+ */
 export async function fetchProfessions(
   lang: string = 'en',
   qualificationLevelId?: number
-): Promise<string[]> {
-  const filter = qualificationLevelId ? { qu_le_is_level_o_id: qualificationLevelId } : {};
+): Promise<Profession[]> {
+  const supabase = await createClient();
+  const isEnglish = lang.toLowerCase() === 'en';
 
-  return fetchTranslation<string>({
-    table: 'profession',
-    field: 'masculine_name',
-    lang,
-    textField: 'masculine_name',
-    filter,
+  const queryStr = `id,name,option,description,activity_sector,min_duration,max_duration,effective_date,riasec_evaluation (score,riasec_dimension (id,name))`;
+  let query = supabase.from('profession').select(queryStr).eq('is_active', true);
+
+  if (qualificationLevelId !== undefined) {
+    query = query.eq('qu_le_is_level_o_id', qualificationLevelId);
+  }
+
+  const { data: rawProfessionsData, error: professionsError } = await query;
+
+  if (professionsError) {
+    console.error('Error fetching professions with RIASEC:', professionsError);
+    console.error('Supabase error details:', professionsError);
+    throw new Error(`Error fetching professions: ${professionsError.message}`);
+  }
+
+  if (!rawProfessionsData || rawProfessionsData.length === 0) {
+    return [];
+  }
+
+  const rawProfessions: RawProfessionDbData[] = rawProfessionsData as RawProfessionDbData[]; 
+
+  let translationsMap: {
+    name: Map<number, string>;
+    description: Map<number, string>;
+    activitySector: Map<number, string>;
+  } = { name: new Map(), description: new Map(), activitySector: new Map() };
+
+  if (!isEnglish) {
+    try {
+      const langId = await fetchLanguageId(lang);
+      const professionIds = rawProfessions.map((p) => p.id);
+      const fieldsToTranslate = ['name', 'description', 'activity_sector'];
+
+      const { data: translations, error: transError } = await supabase
+        .from('translation')
+        .select('value, field, pro_has_id')
+        .eq('lan_translates_id', langId)
+        .in('pro_has_id', professionIds)
+        .in('field', fieldsToTranslate);
+
+      if (transError) throw transError;
+
+      translations?.forEach((t) => {
+        if (t.field === 'name') translationsMap.name.set(t.pro_has_id, t.value);
+        else if (t.field === 'description') translationsMap.description.set(t.pro_has_id, t.value);
+        else if (t.field === 'activity_sector')
+          translationsMap.activitySector.set(t.pro_has_id, t.value);
+      });
+    } catch (error) {
+      console.error('Error fetching or processing translations:', error); 
+    }
+  } 
+
+  const professions: Profession[] = rawProfessions.map((rawProf) => {
+    const riasecEvaluationObject: RiasecScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+    rawProf.riasec_evaluation.forEach((ev) => {
+      ev.riasec_dimension.forEach((dim) => {
+        if (dim.name) {
+          const key = dimensionNameToKeyMap[dim.name];
+          if (key) {
+            riasecEvaluationObject[key] = ev.score ?? 0;
+          } else {
+            console.warn(`Unknown RIASEC dimension name found: ${dim.name}`);
+          }
+        }
+      });
+    });
+
+    const name = isEnglish ? rawProf.name : translationsMap.name.get(rawProf.id) || rawProf.name;
+    const description = isEnglish
+      ? rawProf.description
+      : translationsMap.description.get(rawProf.id) || rawProf.description;
+    const activitySector = isEnglish
+      ? rawProf.activity_sector
+      : translationsMap.activitySector.get(rawProf.id) || rawProf.activity_sector;
+
+    const baseProfessionData: BaseProfession = {
+      id: rawProf.id,
+      name: name ?? '',
+      option: rawProf.option,
+      description: description,
+      activitySector: activitySector,
+      minDuration: rawProf.min_duration,
+      maxDuration: rawProf.max_duration,
+      effectiveDate: rawProf.effective_date,
+    };
+
+    return {
+      ...baseProfessionData,
+      riasecScores: [riasecEvaluationObject],
+    };
   });
+
+  return professions;
 }
