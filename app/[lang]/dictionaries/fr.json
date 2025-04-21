@@ -13,7 +13,29 @@
       "grid": "Grille",
       "list": "Liste",
       "chart": "Graphique",
-      "score": "Score"
+      "score": "Score",
+      "noDescription": "Aucune description n'est disponible pour le moment",
+      "years": "Ans",
+      "duration": "Durée",
+      "minDuration": "Durée minimale",
+      "maxDuration": "Durée maximale",
+      "noProfessionsFound": "Aucune profession n'est disponible pour le moment",
+      "checkBackLater": "Veuillez vérifier plus tard",
+      "description": "Description",
+      "clickToViewMore": "Clique pour voir plus",
+      "option": "Option",
+      "name": "Nom",
+      "riasecProfile": "Profil RIASEC",
+      "activitySector": "Secteur d'activité",
+      "effectiveDate": "Date d'entrée en vigueur",
+      "search": "Rechercher",
+      "openMenu": "Ouvrir le menu",
+      "actions": "Actions"
+    },
+    "professionsPage": {
+      "title": "Professions",
+      "subtitle": "Trouvez la profession qui correspond à votre profil et à vos aspirations.",
+      "evaluate": "Évaluer"
     },
     "badges": {
       "new": "Nouveau",

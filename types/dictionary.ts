@@ -14,6 +14,26 @@ export interface Dictionary {
     list: string;
     chart: string;
     score: string;
+    name: string;
+    riasecProfile: string;
+    activitySector: string;
+    duration: string;
+    minDuration: string;
+    maxDuration: string;
+    years: string;
+    effectiveDate: string;
+    description: string;
+    clickToViewMore: string;
+    noProfessionsFound: string;
+    option: string;
+    search: string;
+    openMenu: string;
+    actions: string;
+  };
+  professionsPage: {
+    title: string;
+    subtitle: string;
+    evaluate: string;
   };
   badges: {
     new: string;

@@ -13,7 +13,29 @@
       "grid": "Grid",
       "list": "List",
       "chart": "Graph",
-      "score": "Score"
+      "score": "Score",
+      "noDescription": "No description available at the moment",
+      "years": "Years",
+      "duration": "Duration",
+      "minDuration": "Minimum duration",
+      "maxDuration": "Maximum duration",
+      "noProfessionsFound": "No profession available at the moment",
+      "checkBackLater": "Please check back later",
+      "description": "Description",
+      "clickToViewMore": "Click to view more",
+      "option": "Option",
+      "name": "Name",
+      "riasecProfile": "RIASEC Profile",
+      "activitySector": "Activity Sector",
+      "effectiveDate": "Effective Date",
+      "search": "Search",
+      "openMenu": "Open Menu",
+      "actions": "Actions"
+    },
+    "professionsPage": {
+      "title": "Professions",
+      "subtitle": "Find the profession that matches your profile and aspirations.",
+      "evaluate": "Evaluate"
     },
     "badges": {
       "new": "New",
