@@ -1,7 +1,8 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { RiasecResults, RiasecScores, ProfessionMatch } from '@/types/riasec';
+import { RiasecResults, RiasecScores, dimensionNameToKeyMap } from '@/types/riasec';
+import { ProfessionMatch } from '@/types/profession';
 
 /**
  * Converts array of responses to the format expected by the SQL functions
@@ -162,6 +163,7 @@ export async function saveUserRiasecResults(userId: string, profile: RiasecScore
   }
 }
 
+
 /**
  * Get the RIASEC profile of a user
  */
@@ -183,15 +185,6 @@ export async function getUserRiasecResults(userId: string): Promise<RiasecResult
 
   const idToNameMap = await getRiasecDimensionNames();
 
-  const nameToLetter: Record<string, keyof RiasecScores> = {
-    Realistic: 'R',
-    Investigative: 'I',
-    Artistic: 'A',
-    Social: 'S',
-    Enterprising: 'E',
-    Conventional: 'C',
-  };
-
   const profile: Partial<RiasecScores> = {};
   const professions: ProfessionMatch[] = [];
 
@@ -199,7 +192,7 @@ export async function getUserRiasecResults(userId: string): Promise<RiasecResult
     const fullName = idToNameMap[row.ri_di_is_type_of_id];
     if (!fullName) continue;
 
-    const letter = nameToLetter[fullName];
+    const letter = dimensionNameToKeyMap[fullName];
     if (!letter) continue;
 
     profile[letter] = row.score;
