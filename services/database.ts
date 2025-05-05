@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 
 import { Profession, BaseProfession, RawProfessionDbData } from '@/types/profession';
 import { RiasecScores, dimensionNameToKeyMap } from '@/types/riasec';
+import { Resource } from '@/types/resource';
 
 type SupabaseRecord = Record<string, any>;
 
@@ -231,18 +232,40 @@ export async function fetchProfessions(
   const supabase = await createClient();
   const isEnglish = lang.toLowerCase() === 'en';
 
-  const queryStr = `id,name,option,description,activity_sector,min_duration,max_duration,effective_date,riasec_evaluation (score,riasec_dimension (id,name))`;
-  let query = supabase.from('profession').select(queryStr).eq('is_active', true);
+  // --- 1. Update query string ---
+  const queryStr = `
+    id,
+    name,
+    option,
+    description,
+    activity_sector,
+    min_duration,
+    max_duration,
+    effective_date,
+    riasec_evaluation (
+      score,
+      riasec_dimension ( id, name )
+    ),
+    resource (
+      name,
+      href,
+      resource_type ( typeName: name )
+    )
+  `;
+
+  let query = supabase
+    .from('profession')
+    .select(queryStr) 
+    .eq('is_active', true);
 
   if (qualificationLevelId !== undefined) {
     query = query.eq('qu_le_is_level_o_id', qualificationLevelId);
   }
 
+  // --- 2. Execute query ---
   const { data: rawProfessionsData, error: professionsError } = await query;
 
   if (professionsError) {
-    console.error('Error fetching professions with RIASEC:', professionsError);
-    console.error('Supabase error details:', professionsError);
     throw new Error(`Error fetching professions: ${professionsError.message}`);
   }
 
@@ -250,8 +273,10 @@ export async function fetchProfessions(
     return [];
   }
 
-  const rawProfessions: RawProfessionDbData[] = rawProfessionsData as RawProfessionDbData[]; 
+  // --- 3. Type assertion ---
+  const rawProfessions = rawProfessionsData as unknown as RawProfessionDbData[];
 
+  // --- 4. Retrieving translations ---
   let translationsMap: {
     name: Map<number, string>;
     description: Map<number, string>;
@@ -266,63 +291,131 @@ export async function fetchProfessions(
 
       const { data: translations, error: transError } = await supabase
         .from('translation')
-        .select('value, field, pro_has_id')
-        .eq('lan_translates_id', langId)
-        .in('pro_has_id', professionIds)
+        .select('value, field, pro_has_id') 
+        .eq('lan_translates_id', langId) 
+        .in('pro_has_id', professionIds) 
         .in('field', fieldsToTranslate);
 
       if (transError) throw transError;
 
       translations?.forEach((t) => {
-        if (t.field === 'name') translationsMap.name.set(t.pro_has_id, t.value);
-        else if (t.field === 'description') translationsMap.description.set(t.pro_has_id, t.value);
-        else if (t.field === 'activity_sector')
-          translationsMap.activitySector.set(t.pro_has_id, t.value);
-      });
-    } catch (error) {
-      console.error('Error fetching or processing translations:', error); 
-    }
-  } 
-
-  const professions: Profession[] = rawProfessions.map((rawProf) => {
-    const riasecEvaluationObject: RiasecScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
-    rawProf.riasec_evaluation.forEach((ev) => {
-      ev.riasec_dimension.forEach((dim) => {
-        if (dim.name) {
-          const key = dimensionNameToKeyMap[dim.name];
-          if (key) {
-            riasecEvaluationObject[key] = ev.score ?? 0;
-          } else {
-            console.warn(`Unknown RIASEC dimension name found: ${dim.name}`);
-          }
+        if (t.pro_has_id != null && t.value != null && t.field != null) {
+          if (t.field === 'name') translationsMap.name.set(t.pro_has_id, t.value);
+          else if (t.field === 'description')
+            translationsMap.description.set(t.pro_has_id, t.value);
+          else if (t.field === 'activity_sector')
+            translationsMap.activitySector.set(t.pro_has_id, t.value);
         }
       });
-    });
+    } catch (error) {
+      console.error('Error fetching or processing translations:', error);
+    }
+  }
 
-    const name = isEnglish ? rawProf.name : translationsMap.name.get(rawProf.id) || rawProf.name;
-    const description = isEnglish
-      ? rawProf.description
-      : translationsMap.description.get(rawProf.id) || rawProf.description;
-    const activitySector = isEnglish
-      ? rawProf.activity_sector
-      : translationsMap.activitySector.get(rawProf.id) || rawProf.activity_sector;
+  // --- 5. Mapping Raw Data to Profession Type ---
+  const professions = rawProfessions
+    .map((rawProf): Profession | null => {
+      if (rawProf.id == null) {
+        console.warn('Skipping profession due to missing ID:', rawProf);
+        return null;
+      }
 
-    const baseProfessionData: BaseProfession = {
-      id: rawProf.id,
-      name: name ?? '',
-      option: rawProf.option,
-      description: description,
-      activitySector: activitySector,
-      minDuration: rawProf.min_duration,
-      maxDuration: rawProf.max_duration,
-      effectiveDate: rawProf.effective_date,
-    };
+      // 5a. RIASEC treatment
+      const riasecEvaluationObject: RiasecScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+      if (rawProf.riasec_evaluation) {
+        rawProf.riasec_evaluation.forEach((ev) => {
+          if (ev.riasec_dimension && ev.score != null) {
+            ev.riasec_dimension.forEach((dim) => {
+              // 1. Secure access to the 'name' property
+              const dimensionName = (dim as any)?.name;
 
-    return {
-      ...baseProfessionData,
-      riasecScores: [riasecEvaluationObject],
-    };
-  });
+              // 2. Make sure dimensionName is a non-empty string
+              if (typeof dimensionName === 'string' && dimensionName.length > 0) {
+                // 3. Search for the key ('R', 'I', etc.) in the map
+                const potentialKey = dimensionNameToKeyMap[dimensionName];
+
+                // 4. Check if the key has been found AND if it's a valid key for RiasecScores
+                if (potentialKey && potentialKey in riasecEvaluationObject) {
+                  riasecEvaluationObject[potentialKey] = ev.score ?? 0;
+                } else {
+                  console.warn(
+                    `Unknown or invalid RIASEC dimension name mapping: ${dimensionName}`
+                  );
+                }
+              } else if (dimensionName !== null) {
+                console.warn(`Invalid or empty dimension name encountered: ${dimensionName}`);
+              }
+
+            });
+          }
+        });
+      }
+
+      // 5b. Application of translations and default values
+      const name =
+        (isEnglish ? rawProf.name : translationsMap.name.get(rawProf.id) || rawProf.name) ??
+        `Profession ${rawProf.id}`
+      const description = isEnglish
+        ? rawProf.description
+        : translationsMap.description.get(rawProf.id) || rawProf.description;
+      const activitySector = isEnglish
+        ? rawProf.activity_sector
+        : translationsMap.activitySector.get(rawProf.id) || rawProf.activity_sector;
+
+      const baseProfessionData: BaseProfession = {
+        id: rawProf.id,
+        name: name, 
+        option: rawProf.option,
+        description: description,
+        activitySector: activitySector,
+        minDuration: rawProf.min_duration,
+        maxDuration: rawProf.max_duration,
+        effectiveDate: rawProf.effective_date,
+      };
+
+      // --- 5c. Resource processing ---
+      let processedResources: Resource[] = [];
+      const rawResources = rawProf.resource;
+
+      if (Array.isArray(rawResources)) {
+        rawResources.forEach((rawRes) => {
+          if (
+            rawRes &&
+            typeof rawRes === 'object' &&
+            rawRes.name &&
+            rawRes.href &&
+            rawRes.resource_type &&
+            typeof rawRes.resource_type === 'object' &&
+            rawRes.resource_type.typeName
+          ) {
+            processedResources.push({
+              id: rawRes.id,
+              name: rawRes.name,
+              href: rawRes.href,
+              typeName: rawRes.resource_type.typeName,
+            });
+          } else {
+            console.warn(
+              `Profession ID ${rawProf.id} has an incomplete or malformed resource item:`,
+              rawRes
+            );
+          }
+        });
+      } else if (rawResources !== null) {
+        console.warn(
+          `Profession ID ${rawProf.id} has unexpected non-array resource data:`,
+          rawResources
+        );
+      }
+      const finalProfession: Profession = {
+        ...baseProfessionData,
+        riasecScores: [riasecEvaluationObject],
+        resources: processedResources, 
+      };
+
+      return finalProfession;
+    })
+    .filter((p): p is Profession => p !== null); // --- 6. Filtering out null potentials ---
 
   return professions;
 }

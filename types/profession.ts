@@ -1,4 +1,5 @@
 import { RiasecDimension, RiasecScores } from '@/types/riasec';
+import { Resource, RawResourceDbData } from '@/types/resource';
 
 export type BaseProfession = {
   id: number;
@@ -17,6 +18,7 @@ export type ProfessionMatch = Profession & {
 
 export type Profession = BaseProfession & {
   riasecScores: RiasecScores[];
+  resources: Resource[]; 
 };
 
 export type RawProfessionDbData = {
@@ -29,7 +31,11 @@ export type RawProfessionDbData = {
   max_duration?: number | null;
   effective_date?: string | null;
   riasec_evaluation: Array<{
-    score: number;
-    riasec_dimension: RiasecDimension[];
+    score: number | null;
+    riasec_dimension: Array<{
+      id: number;
+      name: RiasecDimension | null;
+    }>;
   }>;
+  resource: RawResourceDbData;
 };
