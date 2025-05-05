@@ -17,8 +17,6 @@
       "noDescription": "No description available at the moment",
       "years": "Years",
       "duration": "Duration",
-      "minDuration": "Minimum duration",
-      "maxDuration": "Maximum duration",
       "noProfessionsFound": "No profession available at the moment",
       "checkBackLater": "Please check back later",
       "description": "Description",
@@ -28,14 +26,33 @@
       "riasecProfile": "RIASEC Profile",
       "activitySector": "Activity Sector",
       "effectiveDate": "Effective Date",
-      "search": "Search",
+      "searchByName": "Search by name",
       "openMenu": "Open Menu",
-      "actions": "Actions"
+      "actions": "Actions",
+      "filterByRiasec": "Filter by RIASEC dimension",
+      "selectType": "Select type",
+      "allTypes": "All types",
+      "viewMore": "View more",
+      "cancel": "Cancel",
+      "save": "Save",
+      "page": "Page",
+      "noResults": "No results found."
     },
     "professionsPage": {
       "title": "Professions",
       "subtitle": "Find the profession that matches your profile and aspirations.",
-      "evaluate": "Evaluate"
+      "evaluate": "Evaluate",
+      "evaluateDescription": "Adjust the sliders to evaluate this profession according to each RIASEC dimension.",
+      "evaluationSaved": "Evaluation saved successfully.",
+      "evaluationError": "Error while saving the evaluation.",
+      "radarChartPlaceholder": "The radar chart will appear here.",
+      "showRiasecDetails": "Show RIASEC details",
+      "noScores": "No scores available.",
+      "alreadyEvaluated": "Already evaluated",
+      "instructionsTitle": "How to evaluate?",
+      "instructionsText": "Use the action menu (...) on each row to open the evaluation window. Adjust the sliders and save your scores.",
+      "evaluation": "Evaluation",
+      "details": "Details"
     },
     "badges": {
       "new": "New",
@@ -73,6 +90,35 @@
         "description": "Choose between light and dark mode",
         "light": "Light",
         "dark": "Dark"
+      }
+    },
+    "riasec": {
+      "riasecScores": "Riasec Scores",
+      "dimensions": {
+        "R": {
+          "name": "Realistic",
+          "description": "People with a Realistic personality type are often practical, hands-on, and enjoy working with tools, machines, or animals. They prefer to work in environments that are concrete and tangible."
+        },
+        "I": {
+          "name": "Investigative",
+          "description": "Investigative individuals are analytical, curious, and enjoy solving complex problems. They often prefer to work in scientific or technical fields."
+        },
+        "A": {
+          "name": "Artistic",
+          "description": "Artistic individuals are creative, imaginative, and often express themselves through art, music, or writing. They prefer to work in unstructured environments that allow for self-expression."
+        },
+        "S": {
+          "name": "Social",
+          "description": "Social individuals are empathetic, caring, and enjoy helping others. They often prefer to work in environments that involve interaction with people."
+        },
+        "E": {
+          "name": "Enterprising",
+          "description": "Enterprising individuals are persuasive, ambitious, and enjoy leading others. They often prefer to work in business or entrepreneurial environments."
+        },
+        "C": {
+          "name": "Conventional",
+          "description": "Conventional individuals are organized, detail-oriented, and enjoy working with data and systems. They often prefer to work in structured environments that involve following rules and procedures."
+        }
       }
     },
     "services": {
@@ -127,32 +173,6 @@
           "topMatches": "Best career matches",
           "noMatches": "No careers match your profile at the moment.",
           "footer": "Based on Holland’s RIASEC model."
-        },
-        "dimensions": {
-          "R": {
-            "name": "Realistic",
-            "description": "People with a Realistic personality type are often practical, hands-on, and enjoy working with tools, machines, or animals. They prefer to work in environments that are concrete and tangible."
-          },
-          "I": {
-            "name": "Investigative",
-            "description": "Investigative individuals are analytical, curious, and enjoy solving complex problems. They often prefer to work in scientific or technical fields."
-          },
-          "A": {
-            "name": "Artistic",
-            "description": "Artistic individuals are creative, imaginative, and often express themselves through art, music, or writing. They prefer to work in unstructured environments that allow for self-expression."
-          },
-          "S": {
-            "name": "Social",
-            "description": "Social individuals are empathetic, caring, and enjoy helping others. They often prefer to work in environments that involve interaction with people."
-          },
-          "E": {
-            "name": "Enterprising",
-            "description": "Enterprising individuals are persuasive, ambitious, and enjoy leading others. They often prefer to work in business or entrepreneurial environments."
-          },
-          "C": {
-            "name": "Conventional",
-            "description": "Conventional individuals are organized, detail-oriented, and enjoy working with data and systems. They often prefer to work in structured environments that involve following rules and procedures."
-          }
         }
       },
       "events": {

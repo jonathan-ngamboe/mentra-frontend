@@ -18,22 +18,39 @@ export interface Dictionary {
     riasecProfile: string;
     activitySector: string;
     duration: string;
-    minDuration: string;
-    maxDuration: string;
     years: string;
     effectiveDate: string;
     description: string;
     clickToViewMore: string;
     noProfessionsFound: string;
     option: string;
-    search: string;
+    searchByName: string;
     openMenu: string;
     actions: string;
+    filterByRiasec: string;
+    selectType: string;
+    allTypes: string;
+    viewMore: string;
+    cancel: string;
+    save: string;
+    page: string;
+    noResults: string;
   };
   professionsPage: {
     title: string;
     subtitle: string;
     evaluate: string;
+    evaluateDescription: string;
+    instructionsTitle: string;
+    instructionsText: string;
+    evaluationSaved: string;
+    evaluationError: string;
+    radarChartPlaceholder: string;
+    showRiasecDetails: string;
+    noScores: string;
+    alreadyEvaluated: string;
+    evaluation: string;
+    details: string;
   };
   badges: {
     new: string;
@@ -70,6 +87,35 @@ export interface Dictionary {
       description: string;
       light: string;
       dark: string;
+    };
+  };
+  riasec: {
+    riasecScores: string;
+    dimensions: {
+      R: {
+        name: string;
+        description: string;
+      };
+      I: {
+        name: string;
+        description: string;
+      };
+      A: {
+        name: string;
+        description: string;
+      };
+      S: {
+        name: string;
+        description: string;
+      };
+      E: {
+        name: string;
+        description: string;
+      };
+      C: {
+        name: string;
+        description: string;
+      };
     };
   };
   services: {
@@ -123,32 +169,6 @@ export interface Dictionary {
         topMatches: string;
         noMatches: string;
         footer: string;
-      };
-      dimensions: {
-        R: {
-          name: string;
-          description: string;
-        };
-        I: {
-          name: string;
-          description: string;
-        };
-        A: {
-          name: string;
-          description: string;
-        };
-        S: {
-          name: string;
-          description: string;
-        };
-        E: {
-          name: string;
-          description: string;
-        };
-        C: {
-          name: string;
-          description: string;
-        };
       };
     };
     events: {

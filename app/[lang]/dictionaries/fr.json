@@ -17,8 +17,6 @@
       "noDescription": "Aucune description n'est disponible pour le moment",
       "years": "Ans",
       "duration": "Durée",
-      "minDuration": "Durée minimale",
-      "maxDuration": "Durée maximale",
       "noProfessionsFound": "Aucune profession n'est disponible pour le moment",
       "checkBackLater": "Veuillez vérifier plus tard",
       "description": "Description",
@@ -28,14 +26,33 @@
       "riasecProfile": "Profil RIASEC",
       "activitySector": "Secteur d'activité",
       "effectiveDate": "Date d'entrée en vigueur",
-      "search": "Rechercher",
+      "searchByName": "Rechercher par nom",
       "openMenu": "Ouvrir le menu",
-      "actions": "Actions"
+      "actions": "Actions",
+      "filterByRiasec": "Filtrer par dimension RIASEC",
+      "selectType": "Sélectionner type",
+      "allTypes": "Tous types",
+      "viewMore": "Voir plus",
+      "cancel": "Annuler",
+      "save": "Sauvegarder",
+      "page": "Page",
+      "noResults": "Aucun résultat trouvé."
     },
     "professionsPage": {
       "title": "Professions",
       "subtitle": "Trouvez la profession qui correspond à votre profil et à vos aspirations.",
-      "evaluate": "Évaluer"
+      "evaluate": "Évaluer",
+      "evaluateDescription": "Ajustez les curseurs pour évaluer cette profession selon chaque dimension RIASEC.",
+      "evaluationSaved": "Évaluation enregistrée avec succès.",
+      "evaluationError": "Erreur lors de la sauvegarde de l'évaluation.",
+      "radarChartPlaceholder": "Le graphique radar apparaîtra ici.",
+      "showRiasecDetails": "Afficher les détails RIASEC",
+      "noScores": "Aucun score disponible.",
+      "alreadyEvaluated": "Déjà évalué",
+      "instructionsTitle": "Comment évaluer ?",
+      "instructionsText": "Utilisez le menu d'actions (...) sur chaque ligne pour ouvrir la fenêtre d'évaluation. Ajustez les curseurs et sauvegardez vos scores.",
+      "evaluation": "Évaluation",
+      "details": "Détails"
     },
     "badges": {
       "new": "Nouveau",
@@ -73,6 +90,35 @@
         "description": "Choisis entre le mode clair et sombre",
         "light": "Clair",
         "dark": "Sombre"
+      }
+    },
+    "riasec": {
+      "riasecScores": "Scores Riasec",
+      "dimensions": {
+        "R": {
+          "name": "Réaliste",
+          "description": "Les personnes réalistes aiment travailler avec leurs mains et préfèrent les activités pratiques aux activités théoriques. Elles sont souvent attirées par des métiers techniques ou manuels."
+        },
+        "I": {
+          "name": "Investigateur",
+          "description": "Les personnes investigatrices aiment résoudre des problèmes et analyser des données. Elles sont souvent attirées par des métiers scientifiques ou techniques."
+        },
+        "A": {
+          "name": "Artistique",
+          "description": "Les personnes artistiques aiment exprimer leur créativité et préfèrent les activités non structurées. Elles sont souvent attirées par des métiers artistiques ou culturels."
+        },
+        "S": {
+          "name": "Social",
+          "description": "Les personnes sociales aiment aider les autres et préfèrent les activités interpersonnelles. Elles sont souvent attirées par des métiers liés à l'éducation ou à la santé."
+        },
+        "E": {
+          "name": "Entreprenant",
+          "description": "Les personnes entreprenantes aiment diriger et persuader les autres. Elles sont souvent attirées par des métiers liés aux affaires ou à la vente."
+        },
+        "C": {
+          "name": "Conventionnel",
+          "description": "Les personnes conventionnelles aiment suivre des règles et préfèrent les activités structurées. Elles sont souvent attirées par des métiers administratifs ou de gestion."
+        }
       }
     },
     "services": {
@@ -127,32 +173,6 @@
           "topMatches": "Métiers les plus compatibles",
           "noMatches": "Aucun métier ne correspond à ton profil pour le moment.",
           "footer": "Basé sur la typologie RIASEC de Holland."
-        },
-        "dimensions": {
-          "R": {
-            "name": "Réaliste",
-            "description": "Les personnes réalistes aiment travailler avec leurs mains et préfèrent les activités pratiques aux activités théoriques. Elles sont souvent attirées par des métiers techniques ou manuels."
-          },
-          "I": {
-            "name": "Investigateur",
-            "description": "Les personnes investigatrices aiment résoudre des problèmes et analyser des données. Elles sont souvent attirées par des métiers scientifiques ou techniques."
-          },
-          "A": {
-            "name": "Artistique",
-            "description": "Les personnes artistiques aiment exprimer leur créativité et préfèrent les activités non structurées. Elles sont souvent attirées par des métiers artistiques ou culturels."
-          },
-          "S": {
-            "name": "Social",
-            "description": "Les personnes sociales aiment aider les autres et préfèrent les activités interpersonnelles. Elles sont souvent attirées par des métiers liés à l'éducation ou à la santé."
-          },
-          "E": {
-            "name": "Entreprenant",
-            "description": "Les personnes entreprenantes aiment diriger et persuader les autres. Elles sont souvent attirées par des métiers liés aux affaires ou à la vente."
-          },
-          "C": {
-            "name": "Conventionnel",
-            "description": "Les personnes conventionnelles aiment suivre des règles et préfèrent les activités structurées. Elles sont souvent attirées par des métiers administratifs ou de gestion."
-          }
         }
       },
       "events": {
