@@ -4,7 +4,7 @@ import { fetchProfessions } from '@/services/database';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
 
-export default async function ProfessionsPage({ params }: { params: { lang: SupportedLocale } }) {
+export default async function ProfessionsPage({ params }: { params: Promise<{ lang: SupportedLocale }> }) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang);
   const professions = await fetchProfessions(lang);
