@@ -30,11 +30,13 @@ export interface Dictionary {
     filterByRiasec: string;
     selectType: string;
     allTypes: string;
+    viewLess: string;
     viewMore: string;
     cancel: string;
     save: string;
     page: string;
     noResults: string;
+    noDescription: string;
   };
   professionsPage: {
     title: string;
