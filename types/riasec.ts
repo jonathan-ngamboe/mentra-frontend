@@ -32,3 +32,12 @@ export const dimensionNameToKeyMap: Record<string, keyof RiasecScores> = {
   Enterprising: 'E',
   Conventional: 'C',
 };
+
+export const riasecLetterToName: { [key in keyof RiasecScores]: string } = {
+  R: 'Realistic',
+  I: 'Investigative',
+  A: 'Artistic',
+  S: 'Social',
+  E: 'Enterprising',
+  C: 'Conventional',
+};
