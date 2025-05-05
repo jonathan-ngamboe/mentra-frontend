@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   SortingState,
   FilterFn,
+  getExpandedRowModel,
 } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
 
@@ -35,7 +36,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Select,
   SelectContent,
@@ -57,10 +57,15 @@ import {
   ArrowUpDown,
   MoreVertical,
   Paintbrush,
-  Info,
   ChevronsUpDown,
+  ChevronsDownUp,
   CheckCircle,
+  ExternalLink,
+  ClipboardList,
+  GraduationCap
 } from 'lucide-react';
+import { updateProfessionRiasecScores } from '@/services/database';
+import { toast } from 'sonner';
 
 const RIASEC_KEYS: RiasecKey[] = ['R', 'I', 'A', 'S', 'E', 'C'];
 
@@ -97,13 +102,21 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
   const [globalFilter, setGlobalFilter] = React.useState('');
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedProfession, setSelectedProfession] = React.useState<Profession | null>(null);
+  const [expanded, setExpanded] = React.useState({});
 
-  const handleSaveEvaluation = async (professionId: number, scores: Record<RiasecKey, number>) => {
-    console.log('Sauvegarde pour', professionId, scores);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    // Ici, vous mettriez à jour l'état global ou re-fetcheriez les données si nécessaire
-    // Pour l'exemple, on ne fait rien de plus
-    // throw new Error("Simulated network error"); // Décommentez pour tester l'erreur
+  const handleSaveEvaluation = async (professionId: number, scores: RiasecScores) => {
+    try {
+      const result = await updateProfessionRiasecScores(professionId, scores);
+
+      if (result.success) {
+        toast.success(dictionary.professionsPage.evaluationSaved);
+      } else if (result.error) {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      toast.error(`${dictionary.professionsPage.evaluationError} - ${error}`);
+      console.error('Error saving evaluation:', error);
+    }
   };
 
   const openEvaluationModal = (profession: Profession) => {
@@ -115,12 +128,47 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  // Placeholder function - replace with actual logic
   const checkEvaluation = (id: number) => {
+    // You would likely fetch or check local state/context for this
+    // For now, keeping the placeholder
     return false;
   };
 
   const columns: ColumnDef<Profession>[] = React.useMemo(
     () => [
+      {
+        id: 'expander',
+        header: () => null,
+        cell: ({ row }) => {
+          const hasDescription = !!row.original.description;
+          return hasDescription ? (
+            <Button
+              {...{
+                onClick: row.getToggleExpandedHandler(),
+                style: { cursor: 'pointer' },
+              }}
+              variant="ghost"
+              size="sm"
+              className="h-auto p-1"
+              aria-label={
+                row.getIsExpanded() ? dictionary.common.viewLess : dictionary.common.viewMore
+              }
+            >
+              {row.getIsExpanded() ? (
+                <ChevronsDownUp className="h-3.5 w-3.5" />
+              ) : (
+                <ChevronsUpDown className="h-3.5 w-3.5" />
+              )}
+            </Button>
+          ) : (
+            <span className="w-6 block"></span>
+          );
+        },
+        enableSorting: false,
+        enableHiding: false,
+        enableColumnFilter: false,
+      },
       {
         accessorKey: 'riasecScores',
         header: () => (
@@ -150,7 +198,7 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
               <PopoverTrigger asChild>
                 <button
                   className="inline-flex h-7 w-7 items-center justify-center rounded-md font-medium text-xs cursor-pointer border hover:scale-105 transition-transform"
-                  style={{ backgroundColor: dominantColor, color: '#fff' }}
+                  style={{ backgroundColor: dominantColor, color: 'text-muted-foreground' }}
                   aria-label={dictionary.professionsPage.showRiasecDetails}
                 >
                   {topThree || '---'}
@@ -212,6 +260,21 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
         cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
       },
       {
+        accessorKey: 'qualificationLevel',
+        header: () => (
+          <div className="flex items-center gap-1.5">
+            <GraduationCap className="h-4 w-4" />
+            {dictionary.common.qualificationLevel}
+          </div>
+        ),
+        cell: ({ row }) =>
+          row.original.qualificationLevel ? (
+            <span className="truncate">{`${row.original.qualificationLevel.long_name} (${row.original.qualificationLevel.short_name})`}</span>
+          ) : (
+            <span className="text-muted-foreground">-</span>
+          ),
+      },
+      {
         accessorKey: 'option',
         header: () => (
           <div className="flex items-center gap-1.5">
@@ -222,21 +285,6 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
         cell: ({ row }) =>
           row.original.option ? (
             <span className="truncate">{row.original.option}</span>
-          ) : (
-            <span className="text-muted-foreground">-</span>
-          ),
-      },
-      {
-        accessorKey: 'activitySector',
-        header: () => (
-          <div className="flex items-center gap-1.5">
-            <Briefcase className="h-4 w-4" />
-            {dictionary.common.activitySector}
-          </div>
-        ),
-        cell: ({ row }) =>
-          row.original.activitySector ? (
-            <span className="truncate">{row.original.activitySector}</span>
           ) : (
             <span className="text-muted-foreground">-</span>
           ),
@@ -267,11 +315,26 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
         enableSorting: false,
       },
       {
-        accessorKey: 'effectiveDate',
+        accessorKey: 'activitySector',
+        header: () => (
+          <div className="flex items-center gap-1.5">
+            <Briefcase className="h-4 w-4" />
+            {dictionary.common.activitySector}
+          </div>
+        ),
+        cell: ({ row }) =>
+          row.original.activitySector ? (
+            <span className="truncate">{row.original.activitySector}</span>
+          ) : (
+            <span className="text-muted-foreground">-</span>
+          ),
+      },
+      {
+        accessorKey: 'lastRevision',
         header: () => (
           <div className="flex items-center gap-1.5">
             <CalendarDays className="h-4 w-4" />
-            {dictionary.common.effectiveDate}
+            {dictionary.common.lastRevision}
           </div>
         ),
         cell: ({ row }) =>
@@ -280,36 +343,6 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
           ) : (
             <span className="text-muted-foreground">-</span>
           ),
-      },
-      {
-        accessorKey: 'description',
-        header: () => (
-          <div className="flex items-center gap-1.5">
-            <Info className="h-4 w-4" />
-            {dictionary.common.description}
-          </div>
-        ),
-        cell: ({ row }) =>
-          row.original.description ? (
-            <Collapsible>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start p-1 h-auto text-left text-muted-foreground hover:text-foreground"
-                >
-                  <ChevronsUpDown className="h-3.5 w-3.5 mr-1" />
-                  <span className="text-xs">{dictionary.common.viewMore}</span>
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="pt-2">
-                <p className="text-xs text-muted-foreground">{row.original.description}</p>
-              </CollapsibleContent>
-            </Collapsible>
-          ) : (
-            <span className="text-muted-foreground text-xs">-</span>
-          ),
-        enableSorting: false,
       },
       {
         id: 'actions',
@@ -340,17 +373,19 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
                   <DropdownMenuSeparator />
                   {sourceResource && (
                     <DropdownMenuItem
-                      className="cursor-pointer"
+                      className="cursor-pointer flex justify-between items-center"
                       onClick={() => sourceResource.href && openDetails(sourceResource.href)}
                     >
                       {dictionary.professionsPage.details}
+                      <ExternalLink className="ml-2 h-4 w-4" />
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem
-                    className="cursor-pointer"
+                    className="cursor-pointer flex justify-between items-center"
                     onClick={() => openEvaluationModal(profession)}
                   >
                     {dictionary.professionsPage.evaluate}
+                    <ClipboardList className="ml-2 h-4 w-4" />
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -372,6 +407,7 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
       sorting,
       columnFilters,
       globalFilter,
+      expanded,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -381,6 +417,9 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onExpandedChange: setExpanded,
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: (row) => !!row.original.description,
   });
 
   const handleRiasecFilterChange = (value: string) => {
@@ -446,18 +485,37 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() ? 'selected' : undefined}
-                  // data-state={checkUserEvaluation(row.original.id) ? "evaluated" : undefined} // Placeholder pour style "évalué"
-                  className="hover:bg-muted/50 transition-colors"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                <React.Fragment key={row.id}>
+                  <TableRow
+                    data-state={row.getIsSelected() ? 'selected' : undefined}
+                    // data-state={checkUserEvaluation(row.original.id) ? "evaluated" : undefined} // Placeholder pour style "évalué"
+                    className="hover:bg-muted/50 transition-colors"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={table.getVisibleFlatColumns().length} className="py-0 px-0">
+                      {/* Description */}
+                      <div
+                        className={`
+                          transition-all duration-300 ease-in-out overflow-hidden
+                          ${row.getIsExpanded() ? 'max-h-[500px] opacity-100 pt-4 pb-4' : 'max-h-0 opacity-0 pt-0 pb-0'}
+                          px-4 bg-muted/30 text-muted-foreground text-sm whitespace-normal
+                         `}
+                      >
+                        {row.original.description ? (
+                          <p>{row.original.description}</p>
+                        ) : (
+                          <span>{dictionary.common.noDescription}</span>
+                        )}
+                      </div>
                     </TableCell>
-                  ))}
-                </TableRow>
+                  </TableRow>
+                </React.Fragment>
               ))
             ) : (
               <TableRow>
