@@ -25,7 +25,7 @@
       "name": "Nom",
       "riasecProfile": "Profil RIASEC",
       "activitySector": "Secteur d'activité",
-      "effectiveDate": "Date d'entrée en vigueur",
+      "lastRevision": "Dernière révision",
       "searchByName": "Rechercher par nom",
       "openMenu": "Ouvrir le menu",
       "actions": "Actions",
@@ -37,7 +37,8 @@
       "cancel": "Annuler",
       "save": "Sauvegarder",
       "page": "Page",
-      "noResults": "Aucun résultat trouvé."
+      "noResults": "Aucun résultat trouvé.",
+      "qualificationLevel": "Niveau de qualification"
     },
     "professionsPage": {
       "title": "Professions",

@@ -19,7 +19,7 @@ export interface Dictionary {
     activitySector: string;
     duration: string;
     years: string;
-    effectiveDate: string;
+    lastRevision: string;
     description: string;
     clickToViewMore: string;
     noProfessionsFound: string;
@@ -37,6 +37,7 @@ export interface Dictionary {
     page: string;
     noResults: string;
     noDescription: string;
+    qualificationLevel: string;
   };
   professionsPage: {
     title: string;

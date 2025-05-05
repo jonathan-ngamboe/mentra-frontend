@@ -25,7 +25,7 @@
       "name": "Name",
       "riasecProfile": "RIASEC Profile",
       "activitySector": "Activity Sector",
-      "effectiveDate": "Effective Date",
+      "lastRevision": "Last revision",
       "searchByName": "Search by name",
       "openMenu": "Open Menu",
       "actions": "Actions",
@@ -37,7 +37,8 @@
       "cancel": "Cancel",
       "save": "Save",
       "page": "Page",
-      "noResults": "No results found."
+      "noResults": "No results found.",
+      "qualificationLevel": "Qualification level"
     },
     "professionsPage": {
       "title": "Professions",
