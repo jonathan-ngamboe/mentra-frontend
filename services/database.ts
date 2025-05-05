@@ -2,7 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 
-import { Profession, BaseProfession, RawProfessionDbData } from '@/types/profession';
+import { Profession, BaseProfession, RawProfessionDbData, QualificationLevel } from '@/types/profession';
 import { RiasecScores, dimensionNameToKeyMap, riasecLetterToName } from '@/types/riasec';
 import { Resource } from '@/types/resource';
 
@@ -242,6 +242,7 @@ export async function fetchProfessions(
     min_duration,
     max_duration,
     effective_date,
+    qualification_level ( id, short_name, long_name, description ),
     riasec_evaluation (
       score,
       riasec_dimension ( id, name )
@@ -273,37 +274,68 @@ export async function fetchProfessions(
   // --- 3. Type assertion ---
   const rawProfessions = rawProfessionsData as unknown as RawProfessionDbData[];
 
-  // --- 4. Retrieving translations ---
-  let translationsMap: {
+  // --- 4. Retrieving translations for Professions AND Qualification Levels ---
+  let professionTranslationsMap: {
     name: Map<number, string>;
     description: Map<number, string>;
     activitySector: Map<number, string>;
   } = { name: new Map(), description: new Map(), activitySector: new Map() };
 
+  let qualLevelTranslationsMap: Map<number, { short_name?: string, long_name?: string, description?: string }> = new Map();
+
+
   if (!isEnglish) {
     try {
       const langId = await fetchLanguageId(lang);
       const professionIds = rawProfessions.map((p) => p.id);
-      const fieldsToTranslate = ['name', 'description', 'activity_sector'];
+      const qualLevelIds = Array.from(new Set(rawProfessions.map(p => p.qualification_level?.id).filter(id => id !== undefined && id !== null))) as number[];
 
-      const { data: translations, error: transError } = await supabase
+      // Fetch translations for Professions
+      const professionFieldsToTranslate = ['name', 'description', 'activity_sector'];
+      const { data: professionTranslations, error: proTransError } = await supabase
         .from('translation')
         .select('value, field, pro_has_id')
         .eq('lan_translates_id', langId)
         .in('pro_has_id', professionIds)
-        .in('field', fieldsToTranslate);
+        .in('field', professionFieldsToTranslate);
 
-      if (transError) throw transError;
+      if (proTransError) throw proTransError;
 
-      translations?.forEach((t) => {
+      professionTranslations?.forEach((t) => {
         if (t.pro_has_id != null && t.value != null && t.field != null) {
-          if (t.field === 'name') translationsMap.name.set(t.pro_has_id, t.value);
+          if (t.field === 'name') professionTranslationsMap.name.set(t.pro_has_id, t.value);
           else if (t.field === 'description')
-            translationsMap.description.set(t.pro_has_id, t.value);
+            professionTranslationsMap.description.set(t.pro_has_id, t.value);
           else if (t.field === 'activity_sector')
-            translationsMap.activitySector.set(t.pro_has_id, t.value);
+            professionTranslationsMap.activitySector.set(t.pro_has_id, t.value);
         }
       });
+
+      // Fetch translations for Qualification Levels
+      if (qualLevelIds.length > 0) {
+           const qualLevelFieldsToTranslate = ['short_name', 'long_name', 'description'];
+           const { data: qualLevelTranslations, error: qualTransError } = await supabase
+             .from('translation')
+             .select('value, field, qu_le_has_id') 
+             .eq('lan_translates_id', langId)
+             .in('qu_le_has_id', qualLevelIds)
+             .in('field', qualLevelFieldsToTranslate);
+
+           if (qualTransError) throw qualTransError;
+
+           qualLevelTranslations?.forEach((t) => {
+             if (t.qu_le_has_id != null && t.value != null && t.field != null) {
+                if (!qualLevelTranslationsMap.has(t.qu_le_has_id)) {
+                    qualLevelTranslationsMap.set(t.qu_le_has_id, {});
+                }
+                const translations = qualLevelTranslationsMap.get(t.qu_le_has_id)!;
+                if (t.field === 'short_name') translations.short_name = t.value;
+                else if (t.field === 'long_name') translations.long_name = t.value;
+                else if (t.field === 'description') translations.description = t.value;
+             }
+           });
+        }
+
     } catch (error) {
       console.error('Error fetching or processing translations:', error);
     }
@@ -322,16 +354,10 @@ export async function fetchProfessions(
       if (rawProf.riasec_evaluation) {
         rawProf.riasec_evaluation.forEach((ev) => {
           if (ev.riasec_dimension && ev.score != null) {
-            ev.riasec_dimension.forEach((dim) => {
-              // 1. Secure access to the 'name' property
+             ev.riasec_dimension.forEach((dim) => {
               const dimensionName = (dim as any)?.name;
-
-              // 2. Make sure dimensionName is a non-empty string
               if (typeof dimensionName === 'string' && dimensionName.length > 0) {
-                // 3. Search for the key ('R', 'I', etc.) in the map
                 const potentialKey = dimensionNameToKeyMap[dimensionName];
-
-                // 4. Check if the key has been found AND if it's a valid key for RiasecScores
                 if (potentialKey && potentialKey in riasecEvaluationObject) {
                   riasecEvaluationObject[potentialKey] = ev.score ?? 0;
                 } else {
@@ -347,16 +373,33 @@ export async function fetchProfessions(
         });
       }
 
-      // 5b. Application of translations and default values
+      // 5b. Application of profession-specific translations and default values
       const name =
-        (isEnglish ? rawProf.name : translationsMap.name.get(rawProf.id) || rawProf.name) ??
+        (isEnglish ? rawProf.name : professionTranslationsMap.name.get(rawProf.id) || rawProf.name) ??
         `Profession ${rawProf.id}`;
       const description = isEnglish
         ? rawProf.description
-        : translationsMap.description.get(rawProf.id) || rawProf.description;
+        : professionTranslationsMap.description.get(rawProf.id) || rawProf.description;
       const activitySector = isEnglish
         ? rawProf.activity_sector
-        : translationsMap.activitySector.get(rawProf.id) || rawProf.activity_sector;
+        : professionTranslationsMap.activitySector.get(rawProf.id) || rawProf.activity_sector;
+
+      // 5c. Apply translations to Qualification Level if not English and translation exists
+      let translatedQualLevel: QualificationLevel | null = rawProf.qualification_level; // Start with the fetched data
+      if (!isEnglish && rawProf.qualification_level) {
+          const qualLevelId = rawProf.qualification_level.id;
+          const translations = qualLevelTranslationsMap.get(qualLevelId);
+
+          if (translations) {
+              translatedQualLevel = {
+                  ...rawProf.qualification_level,
+                  short_name: translations.short_name ?? rawProf.qualification_level.short_name,
+                  long_name: translations.long_name ?? rawProf.qualification_level.long_name,
+                  description: translations.description ?? rawProf.qualification_level.description,
+              };
+          }
+      }
+
 
       const baseProfessionData: BaseProfession = {
         id: rawProf.id,
@@ -369,7 +412,7 @@ export async function fetchProfessions(
         effectiveDate: rawProf.effective_date,
       };
 
-      // --- 5c. Resource processing ---
+      // --- 5d. Resource processing ---
       let processedResources: Resource[] = [];
       const rawResources = rawProf.resource;
 
@@ -382,13 +425,13 @@ export async function fetchProfessions(
             rawRes.href &&
             rawRes.resource_type &&
             typeof rawRes.resource_type === 'object' &&
-            rawRes.resource_type.typeName
+            (rawRes.resource_type as any).typeName
           ) {
             processedResources.push({
-              id: rawRes.id,
+              id: (rawRes as any).id,
               name: rawRes.name,
               href: rawRes.href,
-              typeName: rawRes.resource_type.typeName,
+              typeName: (rawRes.resource_type as any).typeName,
             });
           } else {
             console.warn(
@@ -405,6 +448,7 @@ export async function fetchProfessions(
       }
       const finalProfession: Profession = {
         ...baseProfessionData,
+        qualificationLevel: translatedQualLevel,
         riasecScores: [riasecEvaluationObject],
         resources: processedResources,
       };
