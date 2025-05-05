@@ -3,7 +3,7 @@
 import { createClient } from '@/utils/supabase/server';
 
 import { Profession, BaseProfession, RawProfessionDbData } from '@/types/profession';
-import { RiasecScores, dimensionNameToKeyMap } from '@/types/riasec';
+import { RiasecScores, dimensionNameToKeyMap, riasecLetterToName } from '@/types/riasec';
 import { Resource } from '@/types/resource';
 
 type SupabaseRecord = Record<string, any>;
@@ -253,10 +253,7 @@ export async function fetchProfessions(
     )
   `;
 
-  let query = supabase
-    .from('profession')
-    .select(queryStr) 
-    .eq('is_active', true);
+  let query = supabase.from('profession').select(queryStr).eq('is_active', true);
 
   if (qualificationLevelId !== undefined) {
     query = query.eq('qu_le_is_level_o_id', qualificationLevelId);
@@ -291,9 +288,9 @@ export async function fetchProfessions(
 
       const { data: translations, error: transError } = await supabase
         .from('translation')
-        .select('value, field, pro_has_id') 
-        .eq('lan_translates_id', langId) 
-        .in('pro_has_id', professionIds) 
+        .select('value, field, pro_has_id')
+        .eq('lan_translates_id', langId)
+        .in('pro_has_id', professionIds)
         .in('field', fieldsToTranslate);
 
       if (transError) throw transError;
@@ -345,7 +342,6 @@ export async function fetchProfessions(
               } else if (dimensionName !== null) {
                 console.warn(`Invalid or empty dimension name encountered: ${dimensionName}`);
               }
-
             });
           }
         });
@@ -354,7 +350,7 @@ export async function fetchProfessions(
       // 5b. Application of translations and default values
       const name =
         (isEnglish ? rawProf.name : translationsMap.name.get(rawProf.id) || rawProf.name) ??
-        `Profession ${rawProf.id}`
+        `Profession ${rawProf.id}`;
       const description = isEnglish
         ? rawProf.description
         : translationsMap.description.get(rawProf.id) || rawProf.description;
@@ -364,7 +360,7 @@ export async function fetchProfessions(
 
       const baseProfessionData: BaseProfession = {
         id: rawProf.id,
-        name: name, 
+        name: name,
         option: rawProf.option,
         description: description,
         activitySector: activitySector,
@@ -410,7 +406,7 @@ export async function fetchProfessions(
       const finalProfession: Profession = {
         ...baseProfessionData,
         riasecScores: [riasecEvaluationObject],
-        resources: processedResources, 
+        resources: processedResources,
       };
 
       return finalProfession;
@@ -418,4 +414,171 @@ export async function fetchProfessions(
     .filter((p): p is Profession => p !== null); // --- 6. Filtering out null potentials ---
 
   return professions;
+}
+
+/**
+ * Updates the RIASEC scores for a specific profession in the database.
+ * It updates the 'score' field for each RIASEC dimension associated with the profession
+ * in the 'Riasec_evaluation' table.
+ *
+ * @param professionId - The ID of the profession whose scores need to be updated.
+ * @param newScores - An object containing the new scores for each RIASEC dimension (R, I, A, S, E, C).
+ * @returns A promise that resolves with a success boolean and an error message if unsuccessful.
+ */
+export async function updateProfessionRiasecScores(
+  professionId: number,
+  newScores: RiasecScores
+): Promise<{ success: boolean; error: string | null }> {
+  const supabase = await createClient();
+
+  try {
+    // 1. Fetch the mapping of RIASEC dimension names to their IDs from the database.
+    // This is necessary to link the incoming letter scores (R, I, ...)
+    // to the correct foreign keys (Ri_di_is_type_of_id) in the Riasec_evaluation table.
+    const { data: dimensions, error: dimensionsError } = await supabase
+      .from('riasec_dimension')
+      .select('id, name');
+
+    if (dimensionsError) {
+      console.error(
+        `[updateProfessionRiasecScores] Error fetching RIASEC dimensions:`,
+        dimensionsError
+      );
+      return {
+        success: false,
+        error: `Failed to fetch RIASEC dimensions: ${dimensionsError.message}`,
+      };
+    }
+
+    if (!dimensions || dimensions.length !== 6) {
+      // Basic validation: expect exactly 6 dimensions
+      console.error(
+        `[updateProfessionRiasecScores] Unexpected number of RIASEC dimensions found (${dimensions?.length || 0}). Expected 6.`,
+        dimensions
+      );
+      return {
+        success: false,
+        error: 'Could not retrieve all required RIASEC dimensions for mapping.',
+      };
+    }
+
+    // Create a map for easy lookup of dimension ID by name (e.g., {'Realistic': 1, 'Investigative': 2, ...})
+    const dimensionNameToIdMap = dimensions.reduce(
+      (map, dim) => {
+        if (dim.name && dim.id) {
+          // Ensure name and id are not null/undefined
+          map[dim.name] = dim.id;
+        }
+        return map;
+      },
+      {} as { [name: string]: number }
+    );
+
+    // Verify that we got IDs for all expected RIASEC names
+    const expectedDimensionNames = Object.values(riasecLetterToName);
+    const missingDimensions = expectedDimensionNames.filter(
+      (name) => dimensionNameToIdMap[name] === undefined
+    );
+    if (missingDimensions.length > 0) {
+      console.error(
+        `[updateProfessionRiasecScores] Missing required RIASEC dimension IDs for names: ${missingDimensions.join(', ')}`
+      );
+      return {
+        success: false,
+        error: `Missing required RIASEC dimensions in DB: ${missingDimensions.join(', ')}`,
+      };
+    }
+
+    // 2. Prepare and execute update promises for each RIASEC score.
+    // We iterate through the keys (R, I, ...) of the newScores object.
+    const updatePromises = Object.keys(newScores).map(async (letterKey) => {
+      const letter = letterKey as keyof RiasecScores; // Cast key to RiasecScores keys
+      const dimensionName = riasecLetterToName[letter];
+      const dimensionId = dimensionNameToIdMap[dimensionName];
+      const score = newScores[letter];
+
+      // Skip update if score is missing or null for this dimension
+      if (score === undefined || score === null) {
+        console.warn(
+          `[updateProfessionRiasecScores] Score for dimension ${letter} is missing or null for profession ${professionId}. Skipping update for this dimension.`
+        );
+        return { dimension: letter, status: 'skipped' }; // Indicate this update was skipped
+      }
+
+      // Perform the update for the specific RIASEC evaluation row:
+      // - Target the 'Riasec_evaluation' table.
+      // - Update the 'score' and 'updated_at' fields.
+      // - Use '.match()' to find the specific row for this profession and dimension ID.
+      const { data, error } = await supabase
+        .from('riasec_evaluation')
+        .update({
+          score: score,
+          updated_at: new Date().toISOString(),
+        })
+        .match({
+          Pro_has_id: professionId,
+          Ri_di_is_type_of_id: dimensionId,
+        });
+
+      // Check for errors on this specific update
+      if (error) {
+        console.error(
+          `[updateProfessionRiasecScores] Error updating score for dimension ${dimensionName} (${letter}) for profession ${professionId}:`,
+          error
+        );
+        // Return error details for this specific dimension
+        return { dimension: letter, status: 'failed', error: error.message };
+      }
+
+      // Return success status for this dimension
+      return { dimension: letter, status: 'fulfilled' };
+    });
+
+    // 3. Wait for all update promises to settle.
+    // Promise.allSettled is used so that if one update fails, the others still complete,
+    // and we can report on all successes and failures.
+    const updateResults = await Promise.allSettled(updatePromises);
+
+    // 4. Summarize the results and report any failures.
+    const failedUpdates = updateResults.filter(
+      (result) =>
+        result.status === 'rejected' ||
+        (result.status === 'fulfilled' && result.value?.status === 'failed')
+    );
+
+    const skippedUpdates = updateResults.filter(
+      (result) => result.status === 'fulfilled' && result.value?.status === 'skipped'
+    );
+
+    if (failedUpdates.length > 0) {
+      // Log and return a combined error message for all failed updates
+      const errors = failedUpdates
+        .map((result) => {
+          if (result.status === 'rejected') {
+            return `Promise Rejected: ${result.reason}`;
+          } else {
+            // result.status === 'fulfilled' && result.value?.status === 'failed'
+            return `Dimension ${result.value.dimension}: ${result.value.error}`;
+          }
+        })
+        .join('; ');
+      return { success: false, error: `${errors}` };
+    }
+
+    // All updates either succeeded or were intentionally skipped
+    if (skippedUpdates.length > 0) {
+      console.warn(
+        `[updateProfessionRiasecScores] Skipped updates for ${skippedUpdates.length} dimensions due to missing/null scores for profession ${professionId}.`
+      );
+    }
+
+    return { success: true, error: null }; // All relevant updates succeeded
+  } catch (generalError: any) {
+    // Catch any unexpected errors during the process (e.g., issues with initial fetch)
+    console.error(
+      `[updateProfessionRiasecScores] An unexpected error occurred during RIASEC update for profession ${professionId}:`,
+      generalError
+    );
+    return { success: false, error: `An unexpected error occurred: ${generalError.message}` };
+  }
 }
