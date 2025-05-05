@@ -108,7 +108,7 @@ export default async function RootLayout({
                   <RevealFx>{children}</RevealFx>
                 </main>
                 <Footer dictionary={dict} />
-                <Toaster position="top-right" />
+                <Toaster richColors position="top-right" />
               </ParticlesProvider>
             </TooltipProvider>
           </ThemeProvider>
