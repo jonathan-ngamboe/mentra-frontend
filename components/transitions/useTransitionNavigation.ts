@@ -1,7 +1,7 @@
 'use client';
 
 import { useTransitionRouter } from 'next-view-transitions';
-import { catTransition } from './effects';
+import { slideInOut } from '@/components/transitions/effects';
 import { isExternalUrl } from '@/lib/utils';
 import { getPathnameWithoutLocale } from '@/lib/utils';
 
@@ -16,17 +16,8 @@ export function useTransitionNavigation() {
    * @param url Destination URL
    */
   const navigateWithTransition = async (url: string) => {
-    // Add a class to the body to temporarily disable interactions
-    document.body.classList.add('transitioning');
-
-    // Create and show the overlay BEFORE navigating
-    const transitionPromise = catTransition();
-
-    // Wait for the overlay to be visible before navigating
-    await transitionPromise;
-
-    // Now navigate to the new page
-    router.push(url);
+    console.log("Navigation to: ", url);
+    router.push(url, { onTransitionReady: slideInOut });
   };
 
   /**
