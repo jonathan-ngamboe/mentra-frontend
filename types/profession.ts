@@ -16,9 +16,11 @@ export type ProfessionMatch = Profession & {
   correlation: number;
 };
 
-export type Profession = BaseProfession & {
-  riasecScores: RiasecScores[];
-  resources: Resource[]; 
+export type QualificationLevel = {
+  id: number;
+  short_name: string;
+  long_name: string;
+  description?: string | null;
 };
 
 export type RawProfessionDbData = {
@@ -30,6 +32,7 @@ export type RawProfessionDbData = {
   min_duration?: number | null;
   max_duration?: number | null;
   effective_date?: string | null;
+  qualification_level: QualificationLevel | null; 
   riasec_evaluation: Array<{
     score: number | null;
     riasec_dimension: Array<{
@@ -38,4 +41,10 @@ export type RawProfessionDbData = {
     }>;
   }>;
   resource: RawResourceDbData;
+};
+
+export type Profession = BaseProfession & {
+  qualificationLevel?: QualificationLevel | null; 
+  riasecScores: RiasecScores[];
+  resources: Resource[]; 
 };
