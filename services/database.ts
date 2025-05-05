@@ -560,10 +560,9 @@ export async function updateProfessionRiasecScores(
           updated_at: new Date().toISOString(),
         })
         .match({
-          Pro_has_id: professionId,
-          Ri_di_is_type_of_id: dimensionId,
+          pro_has_id: professionId,
+          ri_di_is_type_of_id: dimensionId,
         });
-
       // Check for errors on this specific update
       if (error) {
         console.error(
