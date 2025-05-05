@@ -15,9 +15,7 @@ import { Profession } from '@/types/profession';
 import { Dictionary } from '@/types/dictionary';
 import { RiasecKey, RiasecScores } from '@/types/riasec';
 import { RIASEC_COLORS } from '@/constants/riasec';
-import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-
 import {
   Radar,
   RadarChart,
@@ -95,11 +93,9 @@ export function EvaluationModal({
     setIsSaving(true);
     try {
       await onSave(profession.id, scores);
-      toast.success(dictionary.professionsPage.evaluationSaved);
       onOpenChange(false);
     } catch (error) {
-      console.error('Failed to save evaluation:', error);
-      toast.error(dictionary.professionsPage.evaluationError);
+      console.error(dictionary.error.default, error);
     } finally {
       setIsSaving(false);
     }
@@ -114,7 +110,7 @@ export function EvaluationModal({
 
   const chartConfig: ChartConfig = {
     value: {
-      label: dictionary.common.score || 'Score',
+      label: dictionary.common.score,
       color: 'hsl(var(--primary))',
     },
     ...RIASEC_KEYS.reduce(
