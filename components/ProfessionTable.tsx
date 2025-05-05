@@ -128,13 +128,14 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  // Placeholder function - replace with actual logic
-  const checkEvaluation = (id: number) => {
-    // You would likely fetch or check local state/context for this
-    // For now, keeping the placeholder
-    return false;
-  };
-
+  const checkEvaluation = (profession: Profession): boolean => {
+    return profession.riasecScores.some(scoreSet =>
+      Object.values(scoreSet).some(
+        (score) => score !== 0 && score !== null && score !== undefined
+      )
+    );
+  };  
+  
   const columns: ColumnDef<Profession>[] = React.useMemo(
     () => [
       {
@@ -348,7 +349,7 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
         id: 'actions',
         cell: ({ row }) => {
           const profession = row.original;
-          const isEvaluated = checkEvaluation(profession.id);
+          const isEvaluated = checkEvaluation(profession);
           const sourceResource = profession.resources?.find(
             (resource) => resource.name === 'Source'
           );
@@ -487,8 +488,7 @@ export const ProfessionTable = ({ professions, dictionary, lang }: Props) => {
               table.getRowModel().rows.map((row) => (
                 <React.Fragment key={row.id}>
                   <TableRow
-                    data-state={row.getIsSelected() ? 'selected' : undefined}
-                    // data-state={checkUserEvaluation(row.original.id) ? "evaluated" : undefined} // Placeholder pour style "évalué"
+                    data-state={checkEvaluation(row.original) ? "evaluated" : undefined}
                     className="hover:bg-muted/50 transition-colors"
                   >
                     {row.getVisibleCells().map((cell) => (
