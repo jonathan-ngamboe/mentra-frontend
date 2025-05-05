@@ -2,7 +2,12 @@
 
 import { createClient } from '@/utils/supabase/server';
 
-import { Profession, BaseProfession, RawProfessionDbData, QualificationLevel } from '@/types/profession';
+import {
+  Profession,
+  BaseProfession,
+  RawProfessionDbData,
+  QualificationLevel,
+} from '@/types/profession';
 import { RiasecScores, dimensionNameToKeyMap, riasecLetterToName } from '@/types/riasec';
 import { Resource } from '@/types/resource';
 
@@ -281,14 +286,22 @@ export async function fetchProfessions(
     activitySector: Map<number, string>;
   } = { name: new Map(), description: new Map(), activitySector: new Map() };
 
-  let qualLevelTranslationsMap: Map<number, { short_name?: string, long_name?: string, description?: string }> = new Map();
-
+  let qualLevelTranslationsMap: Map<
+    number,
+    { short_name?: string; long_name?: string; description?: string }
+  > = new Map();
 
   if (!isEnglish) {
     try {
       const langId = await fetchLanguageId(lang);
       const professionIds = rawProfessions.map((p) => p.id);
-      const qualLevelIds = Array.from(new Set(rawProfessions.map(p => p.qualification_level?.id).filter(id => id !== undefined && id !== null))) as number[];
+      const qualLevelIds = Array.from(
+        new Set(
+          rawProfessions
+            .map((p) => p.qualification_level?.id)
+            .filter((id) => id !== undefined && id !== null)
+        )
+      ) as number[];
 
       // Fetch translations for Professions
       const professionFieldsToTranslate = ['name', 'description', 'activity_sector'];
@@ -313,29 +326,28 @@ export async function fetchProfessions(
 
       // Fetch translations for Qualification Levels
       if (qualLevelIds.length > 0) {
-           const qualLevelFieldsToTranslate = ['short_name', 'long_name', 'description'];
-           const { data: qualLevelTranslations, error: qualTransError } = await supabase
-             .from('translation')
-             .select('value, field, qu_le_has_id') 
-             .eq('lan_translates_id', langId)
-             .in('qu_le_has_id', qualLevelIds)
-             .in('field', qualLevelFieldsToTranslate);
+        const qualLevelFieldsToTranslate = ['short_name', 'long_name', 'description'];
+        const { data: qualLevelTranslations, error: qualTransError } = await supabase
+          .from('translation')
+          .select('value, field, qu_le_has_id')
+          .eq('lan_translates_id', langId)
+          .in('qu_le_has_id', qualLevelIds)
+          .in('field', qualLevelFieldsToTranslate);
 
-           if (qualTransError) throw qualTransError;
+        if (qualTransError) throw qualTransError;
 
-           qualLevelTranslations?.forEach((t) => {
-             if (t.qu_le_has_id != null && t.value != null && t.field != null) {
-                if (!qualLevelTranslationsMap.has(t.qu_le_has_id)) {
-                    qualLevelTranslationsMap.set(t.qu_le_has_id, {});
-                }
-                const translations = qualLevelTranslationsMap.get(t.qu_le_has_id)!;
-                if (t.field === 'short_name') translations.short_name = t.value;
-                else if (t.field === 'long_name') translations.long_name = t.value;
-                else if (t.field === 'description') translations.description = t.value;
-             }
-           });
-        }
-
+        qualLevelTranslations?.forEach((t) => {
+          if (t.qu_le_has_id != null && t.value != null && t.field != null) {
+            if (!qualLevelTranslationsMap.has(t.qu_le_has_id)) {
+              qualLevelTranslationsMap.set(t.qu_le_has_id, {});
+            }
+            const translations = qualLevelTranslationsMap.get(t.qu_le_has_id)!;
+            if (t.field === 'short_name') translations.short_name = t.value;
+            else if (t.field === 'long_name') translations.long_name = t.value;
+            else if (t.field === 'description') translations.description = t.value;
+          }
+        });
+      }
     } catch (error) {
       console.error('Error fetching or processing translations:', error);
     }
@@ -354,7 +366,7 @@ export async function fetchProfessions(
       if (rawProf.riasec_evaluation) {
         rawProf.riasec_evaluation.forEach((ev) => {
           if (ev.riasec_dimension && ev.score != null) {
-             ev.riasec_dimension.forEach((dim) => {
+            ev.riasec_dimension.forEach((dim) => {
               const dimensionName = (dim as any)?.name;
               if (typeof dimensionName === 'string' && dimensionName.length > 0) {
                 const potentialKey = dimensionNameToKeyMap[dimensionName];
@@ -375,7 +387,9 @@ export async function fetchProfessions(
 
       // 5b. Application of profession-specific translations and default values
       const name =
-        (isEnglish ? rawProf.name : professionTranslationsMap.name.get(rawProf.id) || rawProf.name) ??
+        (isEnglish
+          ? rawProf.name
+          : professionTranslationsMap.name.get(rawProf.id) || rawProf.name) ??
         `Profession ${rawProf.id}`;
       const description = isEnglish
         ? rawProf.description
@@ -387,19 +401,18 @@ export async function fetchProfessions(
       // 5c. Apply translations to Qualification Level if not English and translation exists
       let translatedQualLevel: QualificationLevel | null = rawProf.qualification_level; // Start with the fetched data
       if (!isEnglish && rawProf.qualification_level) {
-          const qualLevelId = rawProf.qualification_level.id;
-          const translations = qualLevelTranslationsMap.get(qualLevelId);
+        const qualLevelId = rawProf.qualification_level.id;
+        const translations = qualLevelTranslationsMap.get(qualLevelId);
 
-          if (translations) {
-              translatedQualLevel = {
-                  ...rawProf.qualification_level,
-                  short_name: translations.short_name ?? rawProf.qualification_level.short_name,
-                  long_name: translations.long_name ?? rawProf.qualification_level.long_name,
-                  description: translations.description ?? rawProf.qualification_level.description,
-              };
-          }
+        if (translations) {
+          translatedQualLevel = {
+            ...rawProf.qualification_level,
+            short_name: translations.short_name ?? rawProf.qualification_level.short_name,
+            long_name: translations.long_name ?? rawProf.qualification_level.long_name,
+            description: translations.description ?? rawProf.qualification_level.description,
+          };
+        }
       }
-
 
       const baseProfessionData: BaseProfession = {
         id: rawProf.id,
@@ -506,7 +519,7 @@ export async function updateProfessionRiasecScores(
       };
     }
 
-    // Create a map for easy lookup of dimension ID by name (e.g., {'Realistic': 1, 'Investigative': 2, ...})
+      // Create a map for easy lookup of dimension ID by name (e.g., {'Realistic': 1, 'Investigative': 2, ...})
     const dimensionNameToIdMap = dimensions.reduce(
       (map, dim) => {
         if (dim.name && dim.id) {
@@ -534,25 +547,20 @@ export async function updateProfessionRiasecScores(
     }
 
     // 2. Prepare and execute update promises for each RIASEC score.
-    // We iterate through the keys (R, I, ...) of the newScores object.
     const updatePromises = Object.keys(newScores).map(async (letterKey) => {
-      const letter = letterKey as keyof RiasecScores; // Cast key to RiasecScores keys
+      const letter = letterKey as keyof RiasecScores;
       const dimensionName = riasecLetterToName[letter];
       const dimensionId = dimensionNameToIdMap[dimensionName];
       const score = newScores[letter];
 
-      // Skip update if score is missing or null for this dimension
+      // Skip update if score is missing or null
       if (score === undefined || score === null) {
         console.warn(
           `[updateProfessionRiasecScores] Score for dimension ${letter} is missing or null for profession ${professionId}. Skipping update for this dimension.`
         );
-        return { dimension: letter, status: 'skipped' }; // Indicate this update was skipped
+        return { dimension: letter, status: 'skipped' };
       }
 
-      // Perform the update for the specific RIASEC evaluation row:
-      // - Target the 'Riasec_evaluation' table.
-      // - Update the 'score' and 'updated_at' fields.
-      // - Use '.match()' to find the specific row for this profession and dimension ID.
       const { data, error } = await supabase
         .from('riasec_evaluation')
         .update({
@@ -563,26 +571,32 @@ export async function updateProfessionRiasecScores(
           pro_has_id: professionId,
           ri_di_is_type_of_id: dimensionId,
         });
+
       // Check for errors on this specific update
       if (error) {
         console.error(
           `[updateProfessionRiasecScores] Error updating score for dimension ${dimensionName} (${letter}) for profession ${professionId}:`,
           error
         );
-        // Return error details for this specific dimension
         return { dimension: letter, status: 'failed', error: error.message };
       }
 
-      // Return success status for this dimension
+      // Check if no rows were matched/updated
+      if (data === null) {
+        console.warn(
+          `[updateProfessionRiasecScores] No rows matched for dimension ${dimensionName} (${letter}) for profession ${professionId}. Could be missing data or RLS issue.`
+        );
+        return { dimension: letter, status: 'no_match' };
+      }
+
+      // If no error and data is not empty, the update was successful for this dimension
       return { dimension: letter, status: 'fulfilled' };
     });
 
     // 3. Wait for all update promises to settle.
-    // Promise.allSettled is used so that if one update fails, the others still complete,
-    // and we can report on all successes and failures.
     const updateResults = await Promise.allSettled(updatePromises);
 
-    // 4. Summarize the results and report any failures.
+    // 4. Summarize the results and report any failures or no-matches.
     const failedUpdates = updateResults.filter(
       (result) =>
         result.status === 'rejected' ||
@@ -593,31 +607,65 @@ export async function updateProfessionRiasecScores(
       (result) => result.status === 'fulfilled' && result.value?.status === 'skipped'
     );
 
+    // Filter results where no rows were matched
+    const noMatchUpdates = updateResults.filter(
+      (result) => result.status === 'fulfilled' && result.value?.status === 'no_match'
+    );
+
     if (failedUpdates.length > 0) {
-      // Log and return a combined error message for all failed updates
       const errors = failedUpdates
         .map((result) => {
           if (result.status === 'rejected') {
             return `Promise Rejected: ${result.reason}`;
           } else {
-            // result.status === 'fulfilled' && result.value?.status === 'failed'
             return `Dimension ${result.value.dimension}: ${result.value.error}`;
           }
         })
         .join('; ');
-      return { success: false, error: `${errors}` };
+      return { success: false, error: `Database errors: ${errors}` };
     }
 
-    // All updates either succeeded or were intentionally skipped
+    // Report if any dimension update found no matching row
+    if (noMatchUpdates.length > 0) {
+      const dimensionsWithNoMatch = noMatchUpdates
+        .map(
+          (result) =>
+            (result as PromiseFulfilledResult<{ dimension: keyof RiasecScores; status: string }>)
+              .value.dimension
+        )
+        .join(', ');
+      const totalExpectedUpdates = Object.keys(newScores).length - skippedUpdates.length;
+      const successfullyFulfilledUpdates = updateResults.filter(
+        (result) => result.status === 'fulfilled' && result.value?.status === 'fulfilled'
+      ).length;
+
+      let errorMessage = `Update completed, but no matching record found for dimensions: ${dimensionsWithNoMatch}. This could be due to missing data in 'riasec_evaluation' or RLS policies preventing access.`;
+
+      if (successfullyFulfilledUpdates > 0) {
+        // Partial success case: Some dimensions updated, others didn't match
+        errorMessage = `Partial update: Records updated for ${successfullyFulfilledUpdates}/${totalExpectedUpdates} dimensions. No matching record found for dimensions: ${dimensionsWithNoMatch}. (Check data or RLS).`;
+        return { success: false, error: errorMessage };
+      } else {
+        // No dimensions were successfully updated because none matched
+        return {
+          success: false,
+          error: `Update failed: No matching record found for any of the dimensions (${dimensionsWithNoMatch}). (Check data or RLS).`,
+        };
+      }
+    }
+
+    // If no failed updates and no no-match updates, then all relevant updates were fulfilled or skipped
     if (skippedUpdates.length > 0) {
       console.warn(
         `[updateProfessionRiasecScores] Skipped updates for ${skippedUpdates.length} dimensions due to missing/null scores for profession ${professionId}.`
       );
+      // If everything was skipped, maybe success: false is better? Depends on context.
+      // Assuming skipped means no score was provided, not a failure to apply.
     }
 
-    return { success: true, error: null }; // All relevant updates succeeded
+    // Full success: all relevant updates found a match and succeeded
+    return { success: true, error: null };
   } catch (generalError: any) {
-    // Catch any unexpected errors during the process (e.g., issues with initial fetch)
     console.error(
       `[updateProfessionRiasecScores] An unexpected error occurred during RIASEC update for profession ${professionId}:`,
       generalError
