@@ -28,8 +28,8 @@ export function RiasecResults({ profile, professionMatches, dictionary }: Riasec
     ([dimension, score]) => ({
       dimension,
       score,
-      label: dictionary.services.careerMatching.dimensions[dimension].name,
-      description: dictionary.services.careerMatching.dimensions[dimension].description,
+      label: dictionary.riasec.dimensions[dimension].name,
+      description: dictionary.riasec.dimensions[dimension].description,
     })
   );
 
@@ -49,43 +49,43 @@ export function RiasecResults({ profile, professionMatches, dictionary }: Riasec
   const radarData = [
     {
       subject: 'R',
-      fullName: dictionary.services.careerMatching.dimensions.R.name,
-      description: dictionary.services.careerMatching.dimensions.R.description,
+      fullName: dictionary.riasec.dimensions.R.name,
+      description: dictionary.riasec.dimensions.R.description,
       value: profile.R,
       fullMark: maxScore,
     },
     {
       subject: 'I',
-      fullName: dictionary.services.careerMatching.dimensions.I.name,
-      description: dictionary.services.careerMatching.dimensions.I.description,
+      fullName: dictionary.riasec.dimensions.I.name,
+      description: dictionary.riasec.dimensions.I.description,
       value: profile.I,
       fullMark: maxScore,
     },
     {
       subject: 'A',
-      fullName: dictionary.services.careerMatching.dimensions.A.name,
-      description: dictionary.services.careerMatching.dimensions.A.description,
+      fullName: dictionary.riasec.dimensions.A.name,
+      description: dictionary.riasec.dimensions.A.description,
       value: profile.A,
       fullMark: maxScore,
     },
     {
       subject: 'S',
-      fullName: dictionary.services.careerMatching.dimensions.S.name,
-      description: dictionary.services.careerMatching.dimensions.S.description,
+      fullName: dictionary.riasec.dimensions.S.name,
+      description: dictionary.riasec.dimensions.S.description,
       value: profile.S,
       fullMark: maxScore,
     },
     {
       subject: 'E',
-      fullName: dictionary.services.careerMatching.dimensions.E.name,
-      description: dictionary.services.careerMatching.dimensions.E.description,
+      fullName: dictionary.riasec.dimensions.E.name,
+      description: dictionary.riasec.dimensions.E.description,
       value: profile.E,
       fullMark: maxScore,
     },
     {
       subject: 'C',
-      fullName: dictionary.services.careerMatching.dimensions.C.name,
-      description: dictionary.services.careerMatching.dimensions.C.description,
+      fullName: dictionary.riasec.dimensions.C.name,
+      description: dictionary.riasec.dimensions.C.description,
       value: profile.C,
       fullMark: maxScore,
     },
